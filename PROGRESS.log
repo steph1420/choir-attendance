@@ -22,3 +22,8 @@
 2026-11-01 22:31:59 IST Code.gs tests written; running
 2026-11-01 22:32:09 IST BUG-4: doGet threw on header mismatch instead of returning a clear JSON error -> wrapped in try/catch
 2026-11-01 22:32:41 IST v0.1.2 docs done; committing
+2026-11-02 00:38:40 IST driftline branch from v0.1.2 (backup tag pushed)
+2026-11-02 00:38:41 IST deps: react 19.1.0, framer-motion 12.43.0
+2026-11-02 00:41:08 IST driftline stills rendered
+2026-11-02 00:42:01 IST BUG-5 (mock): A–Z strip overlapped row buttons on phone -> reserve right gutter
+2026-11-02 00:43:29 IST plan written; committing driftline branch

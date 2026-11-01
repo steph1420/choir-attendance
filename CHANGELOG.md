@@ -1,6 +1,11 @@
 # Changelog
 All notable changes. Format: Keep a Changelog; SemVer.
 
+## [Unreleased] — branch `driftline` (PROPOSED)
+### Added
+- Vendored Driftline Kit v0.3.0 in `src/driftline/` (tokens + react); React 19.1.0, framer-motion 12.43.0, @testing-library/react 16.3.0. Kit tests + contrast run green in the app (55 tests).
+- `mock.html` + `src/mock/` overhaul mockups; `shots/driftline.mjs` → `shots/driftline/*.png`; `docs/DRIFTLINE_PLAN.md` (Q29, Q30, Q32–Q38).
+
 ## [0.1.2] - 2026-11-01
 ### Changed
 - Code.gs sheet layout v1: instructions banner row 1, headers row 2, data from row 3; header check fails clearly.
