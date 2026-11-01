@@ -1,6 +1,19 @@
 # Driftline overhaul plan — choir-attendance (A-02)
-Status: **PROPOSED** (Steve locks) · Kit **v0.3.0** confirmed (`tokens.json` 0.3.0, CHANGELOG [0.3.0] HoldToConfirm) · branch `driftline` · 2026-11-02
+Status: picks below **LOCKED (Steve 2026-11-02 t36u)**; everything else PROPOSED · Kit **v0.3.0** confirmed (`tokens.json` 0.3.0, CHANGELOG [0.3.0] HoldToConfirm) · branch `driftline` · 2026-11-02
 Scope (Steve t34u): a **complete UI overhaul**, not a reskin. Every screen is redesigned from scratch with the kit's shell (Header ↔ PILL, context Segmented, glance StatCards, cards of ListRows, Sheet, Toast + Undo, Dock, HoldToConfirm). We keep only the locked **functional** decisions. Old LUCID layouts are replaced; each replaced layout choice that Steve locked has a Q-ID below.
+
+## 0. LOCKED picks (Steve 2026-11-02 1:00 AM IST, t36u)
+- **Q29 = b LOCKED** — tap the row toggles P ↔ A. **Long-press** opens a Sheet: mark (Present · Absent · Excused · Late only if enabled), Excused reason, remark + 1–5 stars, Left early, Child history. **No Undo toast for marking**: persistent **Undo / Redo** buttons in the header (Today), with a step history (chip "N steps · history" on the glance card).
+- **Q30 = rose LOCKED** — Absent = kit danger (rose), with the word.
+- **Q32 LOCKED** — Excused = **amber** (kit warning), not violet.
+- **Q33 LOCKED** — Late counts as present → present green. Late is **off by default** in marking *and* counters; turned on only in **Settings → Developer options → Late mark**. Not marked stays **neutral**.
+- **Q34 = a LOCKED** — keep the app's own A–Z strip, restyled with tokens (Kiwi asked to add an index rail to the kit as a PROPOSED TODO).
+- **Q35 = a LOCKED** — Dock: Today · Members · Reports · Settings.
+- **Q36 = a LOCKED** — today's hours in the header Segmented; other dates via search.
+- **Q37 = a LOCKED** — `stage` density at ≥ 1600 px.
+- **Q38 = a LOCKED** — all listed old layouts replaced (L/E popup, tap-name remark, LUCID cyan look).
+- Q31 moot → kit `HoldToConfirm` "Hold to clear session".
+Mock stills for these picks: `shots/driftline/v2/`. Sections 3 and 5 below are the pre-lock options, kept for the record.
 
 ## 1. Locked A-02 functions → Driftline
 | Locked function (06-projects A-02) | Driftline home |
@@ -77,3 +90,26 @@ Still to bump: vite 5 → 6.4.1 and TypeScript 5.9 per ADOPT_CHOIR (not done in 
 4. No long-press helper on `ListRow`, no `leading` tone without an icon tile.
 5. ADOPT_CHOIR asks for Retro Glass stills too; AGENT_BRIEF §C lists 4 themes — choose one list.
 6. `HoldToConfirm` under reduced motion shows a full fill at mid-hold (fade), so the "mid" still reads as done-ish.
+
+## 7. v2 self-score (locked picks, `shots/driftline/v2`)
+| # | Criterion | Score | Evidence |
+|---|---|---|---|
+| R1 | Shell fidelity | 2 | Header (+ Undo/Redo icons), hour Segmented, cards, Dock as the reference |
+| R2 | Glance answer | 3 | Present (incl. excused) · Absent · To mark + progress |
+| R3 | Token purity | 2 | mock CSS still has a few px literals (rail 28, bar 8, field 96) |
+| R4 | Colour meaning | 2 | green present (+late), rose absent, amber excused, neutral not marked; amber also used for "Below 75%" and stars (Q39) |
+| R5 | Hierarchy & type | 2 | scale sizes; long Developer meta wraps |
+| R6 | Touch | 3 | whole row is the target; 44 px icons; sheet controls ≥ 44 |
+| R7 | Motion | 2 | kit components only; stills at reduced motion |
+| R8 | Calm | 2 | one primary + hold + history chip; no marking toasts |
+| R9 | Agency & safety | 3 | Undo/Redo always visible, step history, Hold to clear, no confirms |
+| R10 | Day/night parity | 2 | Utopian Day stills checked (phone, tablet, sheet, settings); Retro Glass not rendered |
+| R11 | Accessibility | 2 | labelled icon buttons, radio stars; long-press needs a keyboard/AT path (Q42) |
+| R12 | Words | 3 | "Who's here?", "Late mark", "Hold to clear session" |
+| | **Total** | **28 / 36 (pass, no zeros)** | |
+
+## 8. New questions
+- **Q39 Amber overlap** — Excused is now amber, as are "Below 75%" flags and stars. a) keep (word always shown) · b) "Below 75%" → rose (needs you) · c) stars neutral/ink. **Rec: b + c.**
+- **Q40 Step history** — where the history opens: a) Sheet listing steps (newest first), tap a step to go back to it · b) only Undo/Redo, no list. **Rec: a.**
+- **Q41 Undo scope** — a) per session (hour), cleared at day end · b) whole day across hours. Undo after sync sends a reverse op. **Rec: a.**
+- **Q42 Long-press discoverability & access** — a) one-time hint chip "Long-press for more" + a ⋯ in the Sheet-less keyboard path (context-menu key / Shift+F10) · b) hint only. **Rec: a.**
