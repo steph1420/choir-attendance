@@ -16,3 +16,9 @@
 2026-11-01 22:10:27 IST pushed v0.1.0
 2026-11-01 22:24:42 IST v0.1.1 start: BUG-2 flip popups (Q27=B)
 2026-11-01 22:24:50 IST v0.1.1 tests/build/shots done
+2026-11-01 22:25:05 IST pushed v0.1.1
+2026-11-01 22:25:33 IST TEST sheet created 1UGipn6RO-ylhvxE65wrnoRELnyEVE-wjuzsM7Wn7590 (9 tabs incl Read Me)
+2026-11-01 22:31:34 IST TEST sheet formatted (banners, frozen, validation, CF, protections); updating Code.gs to layout v1
+2026-11-01 22:31:59 IST Code.gs tests written; running
+2026-11-01 22:32:09 IST BUG-4: doGet threw on header mismatch instead of returning a clear JSON error -> wrapped in try/catch
+2026-11-01 22:32:41 IST v0.1.2 docs done; committing
