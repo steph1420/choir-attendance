@@ -77,3 +77,5 @@ textarea.field{width:calc(100% - 2*var(--lucid-space-4));margin:0 var(--lucid-sp
 .stars{display:flex;padding:0 var(--lucid-space-2)}
 .star{width:var(--lucid-touch-min);height:var(--lucid-touch-min);font-size:26px;color:var(--lucid-color-text-faint)}.star.on{color:var(--lucid-color-accent-soft)}
 .toast{position:fixed;bottom:calc(var(--lucid-safe-bottom) + 12px);left:50%;transform:translateX(-50%);min-height:52px;padding:0 24px;display:flex;align-items:center;border-radius:26px;background:var(--lucid-color-surface-raised);border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 36px rgba(0,0,0,.5);z-index:40;font-size:14.5px}
+.pop.pop-above{top:auto;bottom:calc(100% + 10px)}
+.pop-above .pop-arrow{top:auto;bottom:-8px;transform:rotate(225deg)}

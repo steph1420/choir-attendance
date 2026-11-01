@@ -1,6 +1,10 @@
 # Changelog
 All notable changes. Format: Keep a Changelog; SemVer.
 
+## [0.1.1] - 2026-11-01
+### Fixed
+- BUG-2: L/E and ⋯ popups flip above the button when there is no room below (A-02 Q27 = B). Test added.
+
 ## [0.1.0] - 2026-11-01
 ### Added
 - Marking screen (P / A / L-E popup / ⋯ menu), tap name for remark + stars, Section/Role/A–Z grouping with ported A–Z strip.

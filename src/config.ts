@@ -6,6 +6,7 @@ export const CONFIG = {
   excusedCountsAs: 'present' as 'present' | 'absent' | 'not-counted', // A-02 Q11
   lateCountsAsAttended: true, // A-02 round 3 (Late = attended)
   syncRetryMs: 5000,
+  popupMargin: 12, // px gap kept from viewport edge (Q27 flip)
   syncBatchMax: 50,
   stars: 5, // A-02 Q17 proficiency
   excusedReasons: ['Sick', 'On leave', 'School duty', 'Other'],
