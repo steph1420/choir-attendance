@@ -13,3 +13,4 @@
 2026-11-01 22:09:13 IST rebuilt + reshot
 2026-11-01 22:10:02 IST docs + Code.gs written; creating repo
 2026-11-01 22:10:15 IST BUG-git: no git identity in new repo -> set repo-local identity
+2026-11-01 22:10:27 IST pushed v0.1.0
