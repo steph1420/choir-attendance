@@ -29,3 +29,6 @@
 2026-11-02 00:43:29 IST plan written; committing driftline branch
 2026-11-02 01:00:56 IST t36u picks: re-render v2 mocks
 2026-11-02 01:02:17 IST v2 stills viewed (14); plan LOCKED section + score 28/36
+2026-11-02 01:09:21 IST t38u/t40u: v3 mocks start
+2026-11-02 01:10:41 IST BUG-6 (mock): tablet session card pushed off-screen by spanning register row; phone header title truncated -> rows auto/1fr, title 'Choir'
+2026-11-02 01:11:25 IST v3 stills (12) viewed; plan + changelog updated; score 28/36

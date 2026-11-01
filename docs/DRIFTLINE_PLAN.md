@@ -5,7 +5,7 @@ Scope (Steve t34u): a **complete UI overhaul**, not a reskin. Every screen is re
 ## 0. LOCKED picks (Steve 2026-11-02 1:00 AM IST, t36u)
 - **Q29 = b LOCKED** — tap the row toggles P ↔ A. **Long-press** opens a Sheet: mark (Present · Absent · Excused · Late only if enabled), Excused reason, remark + 1–5 stars, Left early, Child history. **No Undo toast for marking**: persistent **Undo / Redo** buttons in the header (Today), with a step history (chip "N steps · history" on the glance card).
 - **Q30 = rose LOCKED** — Absent = kit danger (rose), with the word.
-- **Q32 LOCKED** — Excused = **amber** (kit warning), not violet.
+- ~~Q32 Excused = amber~~ → superseded by **Q39 violet** (t40u).
 - **Q33 LOCKED** — Late counts as present → present green. Late is **off by default** in marking *and* counters; turned on only in **Settings → Developer options → Late mark**. Not marked stays **neutral**.
 - **Q34 = a LOCKED** — keep the app's own A–Z strip, restyled with tokens (Kiwi asked to add an index rail to the kit as a PROPOSED TODO).
 - **Q35 = a LOCKED** — Dock: Today · Members · Reports · Settings.
@@ -14,6 +14,38 @@ Scope (Steve t34u): a **complete UI overhaul**, not a reskin. Every screen is re
 - **Q38 = a LOCKED** — all listed old layouts replaced (L/E popup, tap-name remark, LUCID cyan look).
 - Q31 moot → kit `HoldToConfirm` "Hold to clear session".
 Mock stills for these picks: `shots/driftline/v2/`. Sections 3 and 5 below are the pre-lock options, kept for the record.
+
+## 0b. LOCKED picks (Steve 2026-11-02 1:05–1:08 AM IST, t38u/t40u)
+- **Q39 LOCKED** — Excused = **violet** (kit `special`); amber no longer used for Excused. Other amber uses stay (Below 75% flag, Reports badge, stars).
+- **Q40 = a LOCKED** — simple Undo / Redo buttons in the header; **long-press either** opens the step-history Sheet; tapping a step goes back to it. The separate history chip is removed.
+- **Q41 = a LOCKED** — undo scoped to the hour session, cleared at the end of the day; undoing a synced change sends a reverse change to the sheet.
+- **Q42 = a LOCKED** — one-time "Long-press for more" hint + a keyboard shortcut that opens the row Sheet.
+- **Layout (t38u) LOCKED:** the glance panel is **collapsible** (chevron → slim one-line summary "12 present · 3 absent · 15 to mark" + bar; state remembered); a visible **Group by: Class · Role · A–Z** switch above the register; on phones the register takes most of the screen (hero hidden, title "Choir" in the header, glance collapsed by default on phone); the **A–Z rail is tall** (spans the register, letters evenly spaced).
+Stills: `shots/driftline/v3/`.
+
+## 9. v3 self-score (`shots/driftline/v3`)
+| # | Criterion | Score | Evidence |
+|---|---|---|---|
+| R1 | Shell fidelity | 2 | kit Header/Segmented/Cards/Dock; slim summary bar is an app piece (not in kit) |
+| R2 | Glance answer | 3 | collapsed bar still reads present · absent · to mark + progress |
+| R3 | Token purity | 2 | a few px literals left in mock CSS (rail 28, 200/120 offsets, bar 8) |
+| R4 | Colour meaning | 2 | green present, rose absent, violet excused, neutral not marked; violet is the kit's "special" meaning (Q43) |
+| R5 | Hierarchy & type | 2 | scale sizes; Group-by + hint on one line |
+| R6 | Touch | 3 | 8 full rows visible on 390×844; rows, icons, rail letters ≥ 44 hit |
+| R7 | Motion | 2 | kit components; stills at reduced motion |
+| R8 | Calm | 2 | primary + hold + hint chip on Today |
+| R9 | Agency & safety | 3 | Undo/Redo always on top, step history, Hold to clear, no confirms |
+| R10 | Day/night parity | 2 | Utopian Day phone + sheet checked; no Retro Glass |
+| R11 | Accessibility | 2 | labels for undo/redo/collapse (aria-expanded); shortcut planned, not built |
+| R12 | Words | 3 | "Long-press for more", "Go back to step 4", "Will undo" |
+| | **Total** | **28 / 36 (pass, no zeros)** | |
+
+## 10. New questions (v3)
+- **Q43 Violet meaning** — kit violet = "special role"; Excused now uses it. a) keep and tell Kiwi Excused is choir's "special" · b) ask Kiwi for an `excused` attendance tone. **Rec: a now, b later (with the attendance-row TODO).**
+- **Q44 A–Z rail visibility** — a) only in A–Z mode (mocks) · b) in every group mode. **Rec: a** (Class/Role are short lists).
+- **Q45 Group-by memory** — a) remember per device (SP-22) · b) reset to Class daily. **Rec: a.**
+- **Q46 Shortcuts** — a) Enter / Space toggles P↔A, Shift+Enter (or the Menu key) opens the row Sheet, Ctrl+Z / Ctrl+Shift+Z undo/redo · b) Sheet only. **Rec: a.**
+- **Q47 Hint dismissal** — a) hint disappears after the first long-press (or ×) and never returns · b) shows for the first 3 sessions. **Rec: a.**
 
 ## 1. Locked A-02 functions → Driftline
 | Locked function (06-projects A-02) | Driftline home |

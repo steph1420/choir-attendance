@@ -4,6 +4,7 @@ All notable changes. Format: Keep a Changelog; SemVer.
 ## [Unreleased] — branch `driftline` (PROPOSED)
 ### Added
 - Vendored Driftline Kit v0.3.0 in `src/driftline/` (tokens + react); React 19.1.0, framer-motion 12.43.0, @testing-library/react 16.3.0. Kit tests + contrast run green in the app (55 tests).
+- v3 mocks (t38u/t40u): violet Excused, header Undo/Redo with long-press step-history Sheet, collapsible glance (slim bar), Group by Class · Role · A–Z, register-first phone layout, tall A–Z rail, long-press hint → `shots/driftline/v3/`.
 - v2 mocks for the t36u LOCKED picks (tap toggle, long-press Sheet, header Undo/Redo, rose absent, amber excused, Late behind Developer options) → `shots/driftline/v2/`.
 - `mock.html` + `src/mock/` overhaul mockups; `shots/driftline.mjs` → `shots/driftline/*.png`; `docs/DRIFTLINE_PLAN.md` (Q29, Q30, Q32–Q38).
 
