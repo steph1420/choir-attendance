@@ -1,0 +1,27 @@
+import { createRoot } from 'react-dom/client'
+import './styles/tokens.css'
+import './styles/app.css'
+import { CONFIG } from './config'
+import { sampleChildren, sampleSession } from './data/sample'
+import { Store } from './data/store'
+import { AppsScriptSync, FakeSync } from './data/sync'
+import { MarkScreen } from './ui/MarkScreen'
+const url = localStorage.getItem('choir-attendance/endpoint')
+const adapter = url ? new AppsScriptSync(url) : new FakeSync()
+const params = new URLSearchParams(location.search)
+if (params.has('offline') && adapter instanceof FakeSync) adapter.isOnline = false
+if (params.has('reset')) localStorage.removeItem(CONFIG.storageKey)
+const store = new Store(localStorage, adapter, () => ({ children: sampleChildren(), sessions: [sampleSession()] }))
+if (params.has('demo') && !Object.keys(store.state.sessions[0].entries).length) {
+  // Placeholder demo marks for screenshots only.
+  const sid = store.state.sessions[0].id
+  store.dispatch({ t: 'allPresent', sessionId: sid, childIds: store.state.children.map(c => c.id) })
+  store.dispatch({ t: 'mark', sessionId: sid, childId: 'X005', mark: 'A' })
+  store.dispatch({ t: 'mark', sessionId: sid, childId: 'X008', mark: 'L' })
+  store.dispatch({ t: 'mark', sessionId: sid, childId: 'X013', mark: 'E', reason: 'Sick' })
+  store.dispatch({ t: 'note', sessionId: sid, childId: 'X003', remark: 'Good pitch', stars: 4 })
+  store.dispatch({ t: 'takenBy', sessionId: sid, name: 'Teacher-S' })
+}
+setInterval(() => void store.flush(), CONFIG.syncRetryMs)
+window.addEventListener('online', () => void store.flush())
+createRoot(document.getElementById('root')!).render(<MarkScreen store={store} sessionId={store.state.sessions[0].id} />)

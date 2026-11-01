@@ -1,0 +1,15 @@
+2026-11-01 22:05:27 IST start scaffold v0.1.0
+2026-11-01 22:05:27 IST npm install start
+2026-11-01 22:05:33 IST npm install done
+2026-11-01 22:06:08 IST data layer written
+2026-11-01 22:06:51 IST UI written
+2026-11-01 22:07:42 IST tests+css written; running tsc+vitest
+2026-11-01 22:07:54 IST build
+2026-11-01 22:07:57 IST built
+2026-11-01 22:08:09 IST screenshots start
+2026-11-01 22:08:42 IST screenshots end rc=0
+2026-11-01 22:08:48 IST BUG-shot: selector .mk.A only exists when marked; fixed to 2nd button
+2026-11-01 22:09:06 IST BUG-1 sync stuck 'Syncing N' (ops queued during push waited for 5s interval) -> fixed with progress-guarded drain + test
+2026-11-01 22:09:13 IST rebuilt + reshot
+2026-11-01 22:10:02 IST docs + Code.gs written; creating repo
+2026-11-01 22:10:15 IST BUG-git: no git identity in new repo -> set repo-local identity
