@@ -12,3 +12,7 @@ Trigger: the remarks box in an opened row gets focus. Circles float just above t
 - Reduced motion: no scale/spring, a plain 120 ms fade for all circles together.
 
 Frame `R7-register-phone-bubbles-popin.png` shows mid-animation (left circles full size, right ones still small/faded).
+
+## Decision (Steve, 4 Nov 2026)
+- R7 Register approved.
+- The floating suggestion options (labels, icons, colours, which status shows which) will be **editable later** per event in Settings.
