@@ -19,7 +19,7 @@ Steve has not answered these. Each lists the default this blueprint assumes, mar
 | Q71 | Drawing storage | a) Drive files · b) inside the Sheet | a |
 | Q72 | Notes sharing identity | a) device picks teacher name · b) Google sign-in later | a now |
 | Q73 | Notes timing | a) core in 1.2, draw later · b) all Notes first | a |
-| Q74 | App name | a) pick from list · b) more ideas | answered: CurtainCall (t13u) |
+| Q74 | App name | a) pick from list · b) more ideas | ANSWERED: CurtainCall (t13u; LOCKED, see 07-DECISIONS) |
 | Q75 | Stage 0 length | a) up to 2 weeks · b) 1 week | a |
 | Q76 | Screencast timing | a) stage 2.1 · b) lyrics and timer views before the show | b |
 | Q77 | Hide-names switch on casts | a) optional, off by default · b) leave out | a |
