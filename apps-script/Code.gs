@@ -1,6 +1,7 @@
 /**
- * Choir Attendance — Google Apps Script web endpoint (DRAFT v0.1.0, contract v1).
- * Bound to the CHOIR ATTENDANCE spreadsheet (a new sheet you create — NOT the school roster).
+ * CurtainCall (was Choir Attendance) — Google Apps Script web endpoint (DRAFT v0.1.0, contract v1).
+ * Bound to the CurtainCall spreadsheet (setup() uses the active spreadsheet — NOT the school roster).
+ * Menu CurtainCall > Import roster copies the class list into Members by header name (importRoster).
  * Layout v1: row 1 instructions banner, row 2 headers, data from row 3.
  * Tabs: Roster link, Members, Timetable, Sessions, Attendance, Manual Edits, Reports, Log.
  * The roster is read live via IMPORTRANGE or ROSTER_SHEET_ID below; names are never written to the repo.
@@ -152,11 +153,62 @@ function rosterLive_() {
   var id = PropertiesService.getScriptProperties().getProperty('ROSTER_SHEET_ID') || ROSTER_SHEET_ID;
   if (!id) return [];
   var out = [], src = SpreadsheetApp.openById(id);
-  ['KG A', 'KG B', 'PREP A', 'PREP B'].forEach(function (tab) {
-    var sh = src.getSheetByName(tab); if (!sh || sh.getLastRow() < 2) return;
-    sh.getRange(2, 1, sh.getLastRow() - 1, 3).getValues().forEach(function (r) { if (r[2]) out.push({ id: String(r[2]), name: r[1], section: tab }); }); // school roster: Roll No., Name, Adm. No. (header row 1)
+  src.getSheets().forEach(function (sh) { // every class tab; header row 1 (Roll No., Name, Adm. No.), matched by name
+    rosterRows_(sh).forEach(function (r) { out.push({ id: r.id, name: r.name, section: r.section }); });
   });
   return out;
+}
+
+/** Roster columns are matched by header name (row 1), never by position. Section = tab name, spaces tidied ("PREP  B" -> "PREP B"). */
+var ROSTER_COLS = { id: 'adm. no.', name: 'name' };
+function normHdr_(h) { return String(h).replace(/\s+/g, ' ').trim().toLowerCase(); }
+function rosterRows_(sh) {
+  var lastR = sh.getLastRow(), lastC = sh.getLastColumn(); if (lastR < 2 || lastC < 1) return [];
+  var hdr = sh.getRange(1, 1, 1, lastC).getValues()[0].map(normHdr_);
+  var ci = hdr.indexOf(ROSTER_COLS.id), ni = hdr.indexOf(ROSTER_COLS.name); if (ci < 0) return [];
+  var section = String(sh.getName()).replace(/\s+/g, ' ').trim();
+  return sh.getRange(2, 1, lastR - 1, lastC).getValues().filter(function (r) { return String(r[ci]).trim() !== ''; })
+    .map(function (r) { return { id: String(r[ci]).trim(), name: ni < 0 ? '' : r[ni], section: section }; });
+}
+
+/** Menu: CurtainCall > Import roster. Runs inside Steve's Google account, so names never leave Google. */
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('CurtainCall').addItem('Import roster', 'importRoster').addItem('Set up tabs', 'setup').addToUi();
+}
+
+/**
+ * One-time (re-runnable) copy of the class list into Members, by header name:
+ *   Adm. No. -> Child ID, tab name -> Section, Name -> Name (auto). Roll No. is not copied.
+ * Source id: Script Property ROSTER_SHEET_ID (asked for once if missing). The source is only read.
+ * Existing Child IDs are skipped, so hand edits (Role, From, To, Note) are kept.
+ */
+function importRoster(srcId) {
+  var props = PropertiesService.getScriptProperties();
+  var id = srcId || props.getProperty('ROSTER_SHEET_ID') || ROSTER_SHEET_ID, ui = null;
+  try { ui = SpreadsheetApp.getUi(); } catch (e) { ui = null; }
+  if (!id && ui) {
+    var resp = ui.prompt('Import roster', 'Paste the class list file link or id:', ui.ButtonSet.OK_CANCEL);
+    if (resp.getSelectedButton() !== ui.Button.OK) return 0;
+    var m = String(resp.getResponseText()).match(/[-\w]{25,}/); id = m ? m[0] : '';
+    if (id) props.setProperty('ROSTER_SHEET_ID', id);
+  }
+  if (!id) throw new Error('No class list id. Set Script Property ROSTER_SHEET_ID.');
+  var ss = SpreadsheetApp.getActive(), mem = ss.getSheetByName(TABS.members) || setupTab_(ss, TABS.members);
+  checkHeaders_(mem, 'Members');
+  var h = HEADERS['Members'], seen = {};
+  dataRows_(mem, 1).forEach(function (r) { if (r[0] !== '') seen[String(r[0])] = true; });
+  var add = [];
+  SpreadsheetApp.openById(id).getSheets().forEach(function (sh) {
+    rosterRows_(sh).forEach(function (r) {
+      if (seen[r.id]) return; seen[r.id] = true;
+      var row = h.map(function () { return ''; });
+      row[h.indexOf('Child ID')] = r.id; row[h.indexOf('Section')] = r.section; row[h.indexOf('Name (auto)')] = r.name;
+      add.push(row);
+    });
+  });
+  if (add.length) mem.getRange(Math.max(mem.getLastRow() + 1, FIRST_ROW), 1, add.length, h.length).setValues(add);
+  if (ui) ui.alert('CurtainCall: imported ' + add.length + ' new member(s).');
+  return add.length;
 }
 
 /** v2: upsert/remove one record. Last write wins by op time (ties: later device+seq). Stale writes are logged, not applied. */

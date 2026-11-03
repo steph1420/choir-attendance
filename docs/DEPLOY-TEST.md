@@ -1,5 +1,7 @@
 # Put CurtainCall's backend on the TEST sheet (about 10 minutes)
 
+> **Now superseded for real use by [DEPLOY.md](DEPLOY.md) (the dedicated CurtainCall sheet).** Keep this page only for the TEST sheet.
+
 This only uses the **TEST** sheet. It does not touch the school roster.
 You need: a computer (not the phone), signed in to your Google account.
 
