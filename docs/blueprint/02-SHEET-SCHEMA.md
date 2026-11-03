@@ -40,3 +40,21 @@ Keeps layout v1 (row 1 banner, row 2 headers frozen, data from row 3; `Code.gs` 
 - Conflicts: **last-write-wins per field** using `Updated at`, tie broken by `Rev` then device id. Every overwrite goes to Change log with old value, so nothing is lost and undo can send a reverse change (Q41a).
 - Notes drawings: stored as files (PNG + vector JSON) in a Drive folder `CurtainCall/Drawings/<production>`; the Notes row keeps the file ID. Drawings sync slower and need the Apps Script Drive scope; offline drawings wait in the queue as blobs.
 - Limits: ~10M cells per spreadsheet; one sheet per school year recommended; archive closes a Production (status archived) and can copy its rows to an archive file.
+
+## Contract v2 — as built (slice 1d, 2026-11-04)
+Additive only: `Code.gs` accepts `v:1` and `v:2` bodies and answers with the same `v`, so v1 clients keep working. Missing v2 tabs are created on first use; `setup()` fills only blank header cells added at the end (it never renames).
+
+| Tab | Columns | Notes |
+|---|---|---|
+| 🔒 Sessions | v1 + **Event ID** (col 10) | set when a v2 mark op carries `eventId`; session IDs for new events are `<eventId>/<date>-H2` |
+| 🔒 Events · Costumes · Props · Notes · QuickNotes · CareFlags · Permissions | ID · Event ID · Rev · Updated at · Updated by · Deleted · Record JSON | one row per record; `Rev` +1 per write; remove = `Deleted = Y` (row kept) |
+| 🔒 Change log | At · Entity · ID · Event ID · Old JSON · New JSON · Device · Seq · Result | every record write; `Result` = upsert / remove / `stale: kept newer` |
+
+Ops (POST `{v:2, ops:[QueuedOp]}`; still idempotent by device+seq via Log):
+- v1 ops unchanged; attendance ops may add `eventId`.
+- `<kind>.upsert {item}` / `<kind>.remove {item:{id}}` for kind = events, costumes, props, notes, care, permissions.
+- `quickNote {id, screen, text, at, by, eventId}` → QuickNotes tab.
+- Conflict rule: last write wins by op time (`Updated at`); an older write is not applied and is logged as stale.
+- Pull: `GET ?v=2` adds `records: {events, costumes, …}` (live rows only). Plain `GET` is the v1 reply.
+
+Client: costumes, props, notes, quick notes and sessions are scoped by `eventId`; local data saved before v2 is moved into the current event once. Care flags and permissions are school-wide (not per event). Note: Record JSON can hold care notes — the CareFlags tab must stay owner-only (protected).

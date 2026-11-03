@@ -20,7 +20,7 @@ const url = localStorage.getItem('choir-attendance/endpoint')
 const adapter = url ? new AppsScriptSync(url) : new FakeSync()
 const params = new URLSearchParams(location.search)
 if (params.has('offline') && adapter instanceof FakeSync) adapter.isOnline = false
-if (params.has('reset')) { localStorage.removeItem(CONFIG.storageKey); localStorage.removeItem(KEY); localStorage.removeItem(EVENTS_KEY); localStorage.removeItem(PREFS_KEY); for (const k of ['costumes', 'props', 'notes', 'quicknotes', 'care']) localStorage.removeItem(`curtaincall/${k}/v1`); localStorage.removeItem('curtaincall/tip-today') }
+if (params.has('reset')) { localStorage.removeItem(CONFIG.storageKey); localStorage.removeItem(KEY); localStorage.removeItem(EVENTS_KEY); localStorage.removeItem(PREFS_KEY); for (const k of ['costumes', 'props', 'notes', 'quicknotes', 'care', 'events', 'permissions']) localStorage.removeItem(`curtaincall/${k}/v1`); localStorage.removeItem('curtaincall/tip-today') }
 if (params.has('demo') && !loadEvent(localStorage)) saveEvent(localStorage, makeEvent('choir', 'Annual Day'))
 const store = new Store(localStorage, adapter, () => ({ children: sampleChildren(), sessions: [sampleSession()] }))
 if (params.has('demo') && !Object.keys(store.state.sessions[0].entries).length) {
@@ -38,13 +38,20 @@ window.addEventListener('online', () => void store.flush())
 const qn = new QuickNotes(localStorage, adapter) // offline-queue mode until Apps Script is deployed
 const demo = params.has('demo')
 const cols = { costumes: new Collection<Costume>('costumes', localStorage, adapter, () => demo ? seedCostumes(store.state.children) : []), props: new Collection<Prop>('props', localStorage, adapter, () => demo ? seedProps() : []), notes: new Collection<Note>('notes', localStorage, adapter, () => demo ? seedNotes() : []), care: new Collection<CareFlag>('care', localStorage, adapter, () => demo ? [{ id: 'X002', note: 'Sample: nut allergy' }, { id: 'X007', note: 'Sample: inhaler' }] : []) }
+const sync2 = { events: new Collection<{ id: string }>('events', localStorage, adapter), permissions: new Collection<{ id: string }>('permissions', localStorage, adapter) }
+/** v2 per-event scope. First run after upgrade: all existing local data moves into the current event. */
+function applyScope(evs: Events | null) {
+  if (!evs) return; const id = activeEvent(evs).id!
+  store.adoptSessions(id); qn.setScope(id); for (const k of ['costumes', 'props', 'notes'] as const) cols[k].setScope(id)
+}
+applyScope(loadEvents(localStorage))
 const hist = new History(); trackStore(store, hist); trackCollection(cols.costumes, hist, 'costume'); trackCollection(cols.props, hist, 'prop')
-setInterval(() => { void qn.flush(); Object.values(cols).forEach(c => void c.flush()) }, CONFIG.syncRetryMs)
+setInterval(() => { void qn.flush(); [...Object.values(cols), ...Object.values(sync2)].forEach(c => void c.flush()) }, CONFIG.syncRetryMs)
 function Root() {
   const [evs, setEvsS] = useState<Events | null>(() => loadEvents(localStorage))
   const [prefs, setPrefsS] = useState<Prefs>(() => loadPrefs(localStorage))
-  const setEvs = (e: Events) => { localStorage.setItem(EVENTS_KEY, JSON.stringify(e)); saveEvent(localStorage, activeEvent(e)); setEvsS(e) }
-  const setPrefs = (p: Prefs) => { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); setPrefsS(p) }
+  const setEvs = (e: Events) => { localStorage.setItem(EVENTS_KEY, JSON.stringify(e)); saveEvent(localStorage, activeEvent(e)); for (const x of e.list) if (JSON.stringify(sync2.events.state.items.find(i => i.id === x.id)) !== JSON.stringify(x)) sync2.events.upsert(x); applyScope(e); setEvsS(e) }
+  const setPrefs = (p: Prefs) => { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); if (JSON.stringify(p.caps) !== JSON.stringify(prefs.caps)) sync2.permissions.upsert({ id: 'care-flag-caps', ...p.caps } as { id: string }); setPrefsS(p) }
   if (!evs) return <TemplatePicker onDone={e => setEvs(addEvent(null, e))} />
   const role = params.get('role'); const pr = role ? { ...prefs, role: role as Prefs['role'] } : prefs
   return <AppShell store={store} qn={qn} ev={activeEvent(evs)} cols={cols} ctx={{ hist, evs, setEvs, prefs: pr, setPrefs }} initialShow={params.get('show') === 'props' ? 'props' : 'costumes'} initialTab={(params.get('tab') as Tab) ?? 'today'} initialNote={params.has('note')} />

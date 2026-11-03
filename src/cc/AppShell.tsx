@@ -1,6 +1,7 @@
 // CurtainCall shell: dock on phone, left rail on desktop (03-NAVIGATION, Q70).
 import { useState } from 'react'
 import type { Store } from '../data/store'
+import { sampleSession } from '../data/sample'
 import { MarkScreen } from '../ui/MarkScreen'
 import type { QuickNotes } from './quicknotes'
 import { QuickNoteSheet } from './QuickNoteSheet'
@@ -20,7 +21,7 @@ const TABS: [Tab, string, string][] = [['today', '☀', 'Today'], ['show', '🎭
 export function AppShell({ store, qn, ev, cols, initialTab = 'today', initialNote = false, initialShow = 'costumes', ctx }: { ctx: Ctx; store: Store; qn: QuickNotes; ev: EventSetup; cols: Cols; initialTab?: Tab; initialNote?: boolean; initialShow?: 'costumes' | 'props' }) {
   useSyncExternalStore(qn.subscribe.bind(qn), () => qn.state)
   const [show, setShow] = useState(initialShow); const [tip, setTip] = useState(() => localStorage.getItem('curtaincall/tip-today') !== 'off')
-  const s0 = store.state.sessions[0]; const tname = TEMPLATES.find(t => t.id === ev.template)?.name
+  const s0 = store.sessionFor(ev.id ?? 'e1', sampleSession); const tname = TEMPLATES.find(t => t.id === ev.template)?.name
   const sync = store.sync
   const h = ctx.hist; useSyncExternalStore(h.subscribe, h.snap)
   const [toast, setToast] = useState(''); const say = (t: string | null) => { if (t) { setToast(t); setTimeout(() => setToast(''), 2000) } }
@@ -46,7 +47,7 @@ export function AppShell({ store, qn, ev, cols, initialTab = 'today', initialNot
         {tab === 'show' && <div className="cc-show"><div className="cc-chips cc-subtabs">{(['costumes', 'props'] as const).map(k => <button key={k} className={show === k ? 'on' : ''} onClick={() => setShow(k)}>{k === 'costumes' ? '👗 Costumes' : '🧺 Props'}</button>)}<span style={{ flex: 1 }} /><UR /></div>
           {show === 'costumes' ? <CostumesScreen col={cols.costumes} ev={ev.name} members={store.state.children} /> : <PropsScreen col={cols.props} ev={ev.name} />}</div>}
         {tab === 'members' && <MembersScreen kids={store.state.children} care={cols.care} costumes={cols.costumes} prefs={ctx.prefs} labels={L} />}
-        {tab === 'notes' && <NotesScreen col={cols.notes} quick={qn.state.notes} />}
+        {tab === 'notes' && <NotesScreen col={cols.notes} quick={qn.notes} />}
         {tab === 'reports' && ph('Reports', 'Coming in a later stage.')}
         {tab === 'settings' && <SettingsScreen evs={ctx.evs} setEvs={ctx.setEvs} prefs={ctx.prefs} setPrefs={ctx.setPrefs} />}
       </div>

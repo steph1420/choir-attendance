@@ -13,6 +13,7 @@ export interface Session {
   id: string; date: string; slot: string; venue: string; start: string; end: string
   status: 'planned' | 'conducted' | 'not-conducted' | 'cancelled' | 'rescheduled' | 'shortened' | 'combined' | 'teacher-absent'
   takenBy?: string; remark?: string
+  eventId?: string // v2: CurtainCall per-event scope
   entries: Record<string, Entry>
 }
 export type Op =

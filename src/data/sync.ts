@@ -18,8 +18,8 @@ export class AppsScriptSync implements SyncAdapter {
   constructor(private url: string) {}
   online() { return typeof navigator === 'undefined' || navigator.onLine }
   async push(batch: QueuedOp[]) {
-    const r = await fetch(this.url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ v: 1, ops: batch }) })
-    const j = await r.json(); if (j.v !== 1) throw new Error(`contract version mismatch: ${j.v}`)
+    const r = await fetch(this.url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ v: 2, ops: batch }) /* v2 additive: v1 ops + record ops */ })
+    const j = await r.json(); if (j.v !== 1 && j.v !== 2) throw new Error(`contract version mismatch: ${j.v}`)
     if (!j.ok) throw new Error(j.error || 'server error'); return { ackedSeq: j.ackedSeq }
   }
 }

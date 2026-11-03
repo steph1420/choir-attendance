@@ -4,13 +4,18 @@ import type { SyncAdapter } from '../data/sync'
 import type { QueuedOp } from '../data/model'
 interface Saved<T> { v: 1; items: T[]; queue: QueuedOp[]; seq: number; device: string }
 export class Collection<T extends { id: string }> {
-  state: Saved<T>; private subs = new Set<() => void>()
+  state: Saved<T>; scope?: string; private subs = new Set<() => void>()
   constructor(private kind: string, private kv: KV, private adapter: SyncAdapter, seed: () => T[] = () => [], private now = () => new Date()) {
     const r = kv.getItem(this.key)
     this.state = r ? JSON.parse(r) : { v: 1, items: seed(), queue: [], seq: 0, device: Math.random().toString(36).slice(2, 8) }
   }
   get key() { return `curtaincall/${this.kind}/v1` }
-  get items() { return this.state.items }
+  get items() { const s = this.scope; return s ? this.state.items.filter(i => (i as { eventId?: string }).eventId === s) : this.state.items }
+  /** Scope to one event. Items saved before v2 (no eventId) move into this event once. */
+  setScope(eventId: string) {
+    this.scope = eventId
+    if (this.state.items.some(i => !(i as { eventId?: string }).eventId)) { this.state = { ...this.state, items: this.state.items.map(i => (i as { eventId?: string }).eventId ? i : { ...i, eventId }) }; this.emit() } else this.subs.forEach(f => f())
+  }
   subscribe = (f: () => void) => { this.subs.add(f); return () => { this.subs.delete(f) } }
   snap = () => this.state
   private emit() { this.kv.setItem(this.key, JSON.stringify(this.state)); this.subs.forEach(f => f()) }
@@ -21,6 +26,7 @@ export class Collection<T extends { id: string }> {
   }
   newId() { return `${this.state.device}-${this.state.seq + 1}` }
   upsert(item: T) {
+    if (this.scope && !(item as { eventId?: string }).eventId) item = { ...item, eventId: this.scope }
     const { seq, q } = this.q('upsert', item)
     const has = this.state.items.some(i => i.id === item.id)
     this.state = { ...this.state, seq, items: has ? this.state.items.map(i => i.id === item.id ? item : i) : [item, ...this.state.items], queue: [...this.state.queue, q] }

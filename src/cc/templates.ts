@@ -9,7 +9,7 @@ export const TEMPLATES: Template[] = [
   { id: 'sports', name: 'Sports day', icon: '🏅', labels: { event: 'Sports day', member: 'Athlete', members: 'Athletes', group: 'House', session: 'Practice', part: 'Event' } },
   { id: 'custom', name: 'Custom', icon: '✳', labels: { event: 'Event', member: 'Member', members: 'Members', group: 'Group', session: 'Session', part: 'Part' } },
 ]
-export interface EventSetup { name: string; template: TemplateId; labels: Labels }
+export interface EventSetup { id?: string; name: string; template: TemplateId; labels: Labels }
 export const KEY = 'curtaincall/event/v1'
 export function makeEvent(id: TemplateId, name?: string, overrides: Partial<Labels> = {}): EventSetup {
   const t = TEMPLATES.find(x => x.id === id); if (!t) throw new Error(`unknown template ${id}`)

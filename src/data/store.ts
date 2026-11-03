@@ -27,10 +27,22 @@ export class Store {
   subscribe(f: () => void) { this.subs.add(f); return () => { this.subs.delete(f) } }
   private emit() { this.kv.setItem(CONFIG.storageKey, JSON.stringify(this.state)); this.recalc(); this.subs.forEach(f => f()) }
   private recalc() { const n = this.state.queue.length; this.sync = n === 0 ? { kind: 'synced' } : this.adapter.online() ? { kind: 'syncing', n } : { kind: 'offline', n } }
+  /** v2 per-event scope: sessions without an event are adopted by `eventId` (one-time migration). */
+  adoptSessions(eventId: string) {
+    if (!this.state.sessions.some(s => !s.eventId)) return
+    this.state = { ...this.state, sessions: this.state.sessions.map(s => s.eventId ? s : { ...s, eventId }) }; this.emit()
+  }
+  /** The event's current session; creates one (from `make`) the first time an event is opened. */
+  sessionFor(eventId: string, make: () => Session) {
+    const found = this.state.sessions.find(s => s.eventId === eventId); if (found) return found
+    const s = { ...make(), eventId }; s.id = `${eventId}/${s.id}`
+    this.state = { ...this.state, sessions: [...this.state.sessions, s] }; this.emit(); return s
+  }
   session(id: string) { return this.state.sessions.find(s => s.id === id)! }
   dispatch(op: Op) {
     const seq = this.state.seq + 1
-    const q: QueuedOp = { v: 1, seq, at: new Date().toISOString(), device: this.state.device, op }
+    const ev = this.state.sessions.find(s => s.id === op.sessionId)?.eventId
+    const q: QueuedOp = { v: 1, seq, at: new Date().toISOString(), device: this.state.device, op: ev ? { ...op, eventId: ev } as unknown as Op : op }
     this.state = { ...this.state, seq, sessions: this.state.sessions.map(s => s.id === op.sessionId ? applyOp(s, op) : s), queue: [...this.state.queue, q] }
     this.emit(); void this.flush()
   }

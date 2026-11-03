@@ -1,6 +1,8 @@
 # Changelog
 All notable changes. Format: Keep a Changelog; SemVer.
 
+## [stage1d] 2026-11-04 — Per-event data (sessions, costumes, props, notes, quick notes) with one-time migration; contract v2 (additive): Code.gs record tabs Events/Costumes/Props/Notes/QuickNotes/CareFlags/Permissions + Change log, last-write-wins; client sends v2; docs/DEPLOY-TEST.md. Not deployed.
+
 ## [stage1c] 2026-11-04 — Undo/redo (Today marks + Show edits); Settings (labels, create/switch events, teacher pick-list, role, care-flag permissions via capabilities); Members with ⚕ care flags gated by view/edit.careFlags; costumes linked to members.
 
 ## [stage1b] 2026-11-04 — Today header (summary cards, dismissable tip, template labels); real Costumes and Props (add/edit/status/filters, size tally, WhatsApp reminder copy); full Notes (text + checklist cards, tags, search, pin, quick notes merged). All saved locally and queued.
