@@ -1,6 +1,8 @@
 # Changelog
 All notable changes. Format: Keep a Changelog; SemVer.
 
+## [stage1e] 2026-11-04 — Pull sync (GET ?v=2 on load/focus/60 s, merge by rev+time, pending local wins), sync status in header and rail, backend URL in Settings, CareFlags protection step in DEPLOY-TEST. Not deployed.
+
 ## [stage1d] 2026-11-04 — Per-event data (sessions, costumes, props, notes, quick notes) with one-time migration; contract v2 (additive): Code.gs record tabs Events/Costumes/Props/Notes/QuickNotes/CareFlags/Permissions + Change log, last-write-wins; client sends v2; docs/DEPLOY-TEST.md. Not deployed.
 
 ## [stage1c] 2026-11-04 — Undo/redo (Today marks + Show edits); Settings (labels, create/switch events, teacher pick-list, role, care-flag permissions via capabilities); Members with ⚕ care flags gated by view/edit.careFlags; costumes linked to members.

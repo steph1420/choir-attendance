@@ -14,8 +14,9 @@ import type { History } from './history'
 import type { CareFlag, Prefs } from './access'
 import type { Events } from './templates'
 import { MembersScreen, SettingsScreen } from './people'
+import { statusText, type Puller } from './pull'
 export interface Cols { costumes: Collection<Costume>; props: Collection<Prop>; notes: Collection<Note>; care: Collection<CareFlag> }
-export interface Ctx { hist: History; evs: Events; setEvs: (e: Events) => void; prefs: Prefs; setPrefs: (p: Prefs) => void }
+export interface Ctx { puller: Puller; endpoint: string; setEndpoint: (u: string) => void; hist: History; evs: Events; setEvs: (e: Events) => void; prefs: Prefs; setPrefs: (p: Prefs) => void }
 export type Tab = 'today' | 'show' | 'members' | 'notes' | 'reports' | 'settings'
 const TABS: [Tab, string, string][] = [['today', '☀', 'Today'], ['show', '🎭', 'Show'], ['members', '👥', 'Members'], ['notes', '📝', 'Notes'], ['reports', '📊', 'Reports']]
 export function AppShell({ store, qn, ev, cols, initialTab = 'today', initialNote = false, initialShow = 'costumes', ctx }: { ctx: Ctx; store: Store; qn: QuickNotes; ev: EventSetup; cols: Cols; initialTab?: Tab; initialNote?: boolean; initialShow?: 'costumes' | 'props' }) {
@@ -23,6 +24,7 @@ export function AppShell({ store, qn, ev, cols, initialTab = 'today', initialNot
   const [show, setShow] = useState(initialShow); const [tip, setTip] = useState(() => localStorage.getItem('curtaincall/tip-today') !== 'off')
   const s0 = store.sessionFor(ev.id ?? 'e1', sampleSession); const tname = TEMPLATES.find(t => t.id === ev.template)?.name
   const sync = store.sync
+  const ps = useSyncExternalStore(ctx.puller.subscribe, ctx.puller.snap); const stxt = statusText(sync, ps); const dotk = sync.kind === 'offline' || ps.kind === 'error' ? 'offline' : sync.kind === 'syncing' || ps.kind === 'pulling' ? 'syncing' : 'synced'
   const h = ctx.hist; useSyncExternalStore(h.subscribe, h.snap)
   const [toast, setToast] = useState(''); const say = (t: string | null) => { if (t) { setToast(t); setTimeout(() => setToast(''), 2000) } }
   const UR = () => <><button className="cc-ib" aria-label="Undo" disabled={!h.past.length} title={h.past.at(-1)?.label} onClick={() => say(h.undo() && `Undone: ${h.future.at(-1)!.label}`)}>↶</button><button className="cc-ib" aria-label="Redo" disabled={!h.future.length} onClick={() => say(h.redo() && `Redone: ${h.past.at(-1)!.label}`)}>↷</button></>
@@ -33,13 +35,13 @@ export function AppShell({ store, qn, ev, cols, initialTab = 'today', initialNot
   return (
     <div className="cc-app">
       <nav className="cc-rail" aria-label="Main">
-        <div className="cc-logo">CurtainCall<small>{ev.name}</small></div>
+        <div className="cc-logo">CurtainCall<small>{ev.name}</small><small className="cc-sync"><i className={`dot ${dotk}`} /> {stxt}</small></div>
         {TABS.map(([t, i]) => <button key={t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}><b>{i}</b>{label(t)}</button>)}
         <button className={`gear ${tab === 'settings' ? 'on' : ''}`} onClick={() => setTab('settings')}><b>⚙</b>Settings</button>
       </nav>
       <div className="cc-main">
         {tab === 'today' && <MarkScreen store={store} sessionId={s0.id} labels={{ group: L.group, part: L.part }} header={c => <div className="cc-page cc-todayhead">
-          <header className="cc-head"><div style={{ flex: 1 }}><h1>{L.session} · {s0.start}</h1><p className="cc-sub">{ev.name} · {tname} · <i className={`dot ${sync.kind}`} /> {sync.kind === 'synced' ? 'Synced' : `${sync.n} queued`}</p></div>
+          <header className="cc-head"><div style={{ flex: 1 }}><h1>{L.session} · {s0.start}</h1><p className="cc-sub">{ev.name} · {tname} · <span className="cc-sync" role="status"><i className={`dot ${dotk}`} /> {stxt}</span></p></div>
             <UR /><button className="cc-ib" aria-label="Settings" onClick={() => setTab('settings')}>⚙</button></header>
           <div className="cc-kpi"><div><b className="k-p">{c.present}</b><span>Present</span></div><div><b className="k-a">{c.A}</b><span>Absent</span></div><div><b className="k-l">{c.L}</b><span>Late</span></div><div><b className="k-e">{c.E}</b><span>Excused</span></div></div>
           {tip && <div className="cc-tip" role="note">✨<span>Tap to mark · tap a name for a remark</span><button aria-label="Dismiss tip" onClick={() => { localStorage.setItem('curtaincall/tip-today', 'off'); setTip(false) }}>×</button></div>}
@@ -49,7 +51,7 @@ export function AppShell({ store, qn, ev, cols, initialTab = 'today', initialNot
         {tab === 'members' && <MembersScreen kids={store.state.children} care={cols.care} costumes={cols.costumes} prefs={ctx.prefs} labels={L} />}
         {tab === 'notes' && <NotesScreen col={cols.notes} quick={qn.notes} />}
         {tab === 'reports' && ph('Reports', 'Coming in a later stage.')}
-        {tab === 'settings' && <SettingsScreen evs={ctx.evs} setEvs={ctx.setEvs} prefs={ctx.prefs} setPrefs={ctx.setPrefs} />}
+        {tab === 'settings' && <SettingsScreen endpoint={ctx.endpoint} setEndpoint={ctx.setEndpoint} evs={ctx.evs} setEvs={ctx.setEvs} prefs={ctx.prefs} setPrefs={ctx.setPrefs} />}
       </div>
       <button className="cc-fab" aria-label="Quick note" onClick={() => setNote(true)}>✎</button>
       <nav className="cc-dock" aria-label="Dock">

@@ -25,6 +25,11 @@ export class QuickNotes {
     this.state = { ...this.state, seq, notes: [note, ...this.state.notes], queue: [...this.state.queue, { v: 1, seq, at, device: this.state.device, op }] }
     this.emit(); void this.flush(); return note
   }
+  /** Pull merge: quick notes are append-only; add ones this device hasn't seen. */
+  merge(remote: { id: string; deleted: boolean; item: QuickNote | null }[]) {
+    const have = new Set(this.state.notes.map(n => n.id)); const add = remote.filter(r => !r.deleted && r.item && !have.has(r.id)).map(r => r.item!)
+    if (add.length) { this.state = { ...this.state, notes: [...add, ...this.state.notes].sort((a, b) => b.at.localeCompare(a.at)) }; this.emit() } return add.length
+  }
   async flush() {
     if (!this.state.queue.length || !this.adapter.online()) return
     try { const { ackedSeq } = await this.adapter.push(this.state.queue); this.state = { ...this.state, queue: this.state.queue.filter(q => q.seq > ackedSeq) }; this.emit() } catch { /* stays queued */ }

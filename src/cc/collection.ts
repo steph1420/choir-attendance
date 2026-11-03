@@ -2,7 +2,8 @@
 import type { KV } from '../data/store'
 import type { SyncAdapter } from '../data/sync'
 import type { QueuedOp } from '../data/model'
-interface Saved<T> { v: 1; items: T[]; queue: QueuedOp[]; seq: number; device: string }
+export interface Remote<T> { id: string; rev: number; at: string; deleted: boolean; item: T | null }
+interface Saved<T> { v: 1; meta?: Record<string, { rev: number; at: string }>; items: T[]; queue: QueuedOp[]; seq: number; device: string }
 export class Collection<T extends { id: string }> {
   state: Saved<T>; scope?: string; private subs = new Set<() => void>()
   constructor(private kind: string, private kv: KV, private adapter: SyncAdapter, seed: () => T[] = () => [], private now = () => new Date()) {
@@ -36,6 +37,20 @@ export class Collection<T extends { id: string }> {
   remove(id: string) {
     const { seq, q } = this.q('remove', { id })
     this.state = { ...this.state, seq, items: this.state.items.filter(i => i.id !== id), queue: [...this.state.queue, q] }; this.emit(); void this.flush()
+  }
+  /** Pull merge: remote wins if it is newer (higher rev, then later time) — except records with local changes still queued, which stay on top. Returns how many changed. */
+  merge(remote: Remote<T>[]) {
+    const pending = new Set(this.state.queue.map(q => String((q.op as unknown as { item?: { id: string } }).item?.id)))
+    const meta = { ...(this.state.meta ?? {}) }; let items = this.state.items, n = 0
+    for (const r of remote) {
+      if (pending.has(r.id)) continue
+      const m = meta[r.id]; if (m && (m.rev > r.rev || (m.rev === r.rev && m.at >= r.at))) continue
+      meta[r.id] = { rev: r.rev, at: r.at }
+      const has = items.some(i => i.id === r.id)
+      if (r.deleted || !r.item) { if (has) { items = items.filter(i => i.id !== r.id); n++ } }
+      else { items = has ? items.map(i => i.id === r.id ? r.item! : i) : [...items, r.item]; n++ }
+    }
+    this.state = { ...this.state, meta, items }; this.emit(); return n
   }
   async flush() {
     if (!this.state.queue.length || !this.adapter.online()) return

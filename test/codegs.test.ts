@@ -53,7 +53,7 @@ test('v2: record upsert/remove, rev, change log, answers with v2', () => {
   const rows = g.sheets.get('Costumes')!.rows; expect(rows.length).toBe(3); expect(rows[2].slice(0, 3)).toEqual(['c1', 'e1', 2]); expect(JSON.parse(rows[2][6] as string).status).toBe('Ready')
   post(g, 2, [q(3, { t: 'costumes.remove', item: { id: 'c1' } })]); expect(rows[2][5]).toBe('Y')
   expect(g.sheets.get('Change log')!.rows.slice(2).map((r: unknown[]) => r[8])).toEqual(['upsert', 'upsert', 'remove'])
-  expect(g.call(g.doGet({ parameter: { v: '2' } })).records.costumes).toEqual([])
+  expect(g.call(g.doGet({ parameter: { v: '2' } })).records.costumes).toEqual([{ id: 'c1', rev: 3, at: '2026-11-02T05:00:00Z', deleted: true, item: null }])
 })
 test('v2: last write wins by time; stale write logged not applied', () => {
   const g = fresh(); const at = (seq: number, t: string, op: object) => ({ ...q(seq, op), at: t })

@@ -69,3 +69,4 @@ select.cc-in{appearance:auto}
 .cc-ib:disabled{opacity:.35}
 @media (min-width:900px){.cc-page>.cc-card2{max-width:760px}}
 select.cc-in{color:var(--lucid-color-text-primary);color-scheme:dark}.cc-card2{overflow-x:auto}.cc-perm th{font-size:10px}
+.cc-sync{display:inline-flex;align-items:center;gap:4px}.cc-logo .cc-sync{margin-top:6px}

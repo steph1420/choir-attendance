@@ -173,12 +173,12 @@ function applyRecord_(ss, q, kind, action, item) {
   clog.appendRow([q.at, kind, item.id, eventId, old ? old[6] : '', action === 'remove' ? '' : vals[6], q.device, q.seq, action]);
 }
 function setupTab_(ss, name) { var sh = ss.insertSheet(name); sh.appendRow([name.toUpperCase()]); sh.appendRow(HEADERS[name]); return sh; }
-/** v2 pull: live records per kind (deleted rows left out). */
+/** v2 pull: every record per kind as {id, rev, at, deleted, item} so clients can merge (last write wins) and see deletes. */
 function readRecords_(ss) {
   var out = {};
   Object.keys(RECORD_TABS).forEach(function (k) {
     var sh = ss.getSheetByName(RECORD_TABS[k]); out[k] = [];
-    if (sh) dataRows_(sh, 7).forEach(function (r) { if (r[0] && r[5] !== 'Y' && r[6]) out[k].push(JSON.parse(r[6])); });
+    if (sh) dataRows_(sh, 7).forEach(function (r) { if (r[0]) out[k].push({ id: String(r[0]), rev: Number(r[2]) || 0, at: String(r[3]), deleted: r[5] === 'Y', item: r[5] === 'Y' || !r[6] ? null : JSON.parse(r[6]) }); });
   });
   return out;
 }

@@ -26,9 +26,10 @@ export function MembersScreen({ kids, care, costumes, prefs, labels }: { kids: C
     </div></div>}
   </div>
 }
-export function SettingsScreen({ evs, setEvs, prefs, setPrefs }: { evs: Events; setEvs: (e: Events) => void; prefs: Prefs; setPrefs: (p: Prefs) => void }) {
+export function SettingsScreen({ evs, setEvs, prefs, setPrefs, endpoint, setEndpoint }: { endpoint: string; setEndpoint: (u: string) => void; evs: Events; setEvs: (e: Events) => void; prefs: Prefs; setPrefs: (p: Prefs) => void }) {
   const ev = activeEvent(evs); const [nt, setNt] = useState<TemplateId>('play'); const [nn, setNn] = useState(''); const [err, setErr] = useState('')
-  const admin = can(prefs.caps, prefs.role, 'admin.permissions')
+  const admin = can(prefs.caps, prefs.role, 'admin.permissions'); const [url, setUrl] = useState(endpoint)
+  const urlOk = url === '' || /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(url.trim())
   return <div className="cc-page">
     <Head title="Settings" sub={`${ev.name} · ${TEMPLATES.find(t => t.id === ev.template)?.name}`} />
     <section className="cc-card2"><p className="lbl">You</p>
@@ -39,6 +40,10 @@ export function SettingsScreen({ evs, setEvs, prefs, setPrefs }: { evs: Events; 
       <div className="cc-row"><input className="cc-in" aria-label="New event name" placeholder="New event name" value={nn} onChange={e => setNn(e.target.value)} />
         <select className="cc-in" aria-label="New event template" value={nt} onChange={e => setNt(e.target.value as TemplateId)}>{TEMPLATES.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}</select>
         <button className="cc-btn" onClick={() => { const list = evs.list; const id = `e${list.length + 1}-${Date.now().toString(36)}`; setEvs({ active: id, list: [...list, { ...makeEvent(nt, nn), id }] }); setNn('') }}>Create</button></div></section>
+    <section className="cc-card2"><p className="lbl">Backend (sync)</p>
+      <label className="cc-f"><span className="cap">Web app URL from the TEST sheet (empty = this device only)</span><input className="cc-in" aria-label="Backend URL" placeholder="https://script.google.com/macros/s/…/exec" value={url} onChange={e => setUrl(e.target.value)} /></label>
+      {!urlOk && <p className="cc-sub">That doesn't look like an Apps Script web app link (it should end in /exec).</p>}
+      <div className="cc-row"><span className="cap">Saved on this device only</span><button className="cc-btn" disabled={!urlOk || url.trim() === endpoint} onClick={() => setEndpoint(url.trim())}>Save & reconnect</button></div></section>
     <section className="cc-card2"><p className="lbl">Labels for {ev.name}</p>
       <div className="cc-grid2">{(Object.keys(ev.labels) as (keyof Labels)[]).map(k => <label key={k} className="cc-f"><span className="cap">{k}</span>
         <input className="cc-in" aria-label={`Label ${k}`} value={ev.labels[k]} onChange={e => setEvs({ ...evs, list: evs.list.map(x => x.id === ev.id ? { ...x, labels: { ...x.labels, [k]: e.target.value } } : x) })} /></label>)}</div></section>

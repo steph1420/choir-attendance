@@ -6,7 +6,7 @@ import { sampleChildren, sampleSession } from './data/sample'
 import { Store } from './data/store'
 import { AppsScriptSync, FakeSync } from './data/sync'
 import './cc/cc.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AppShell, type Tab } from './cc/AppShell'
 import { QuickNotes } from './cc/quicknotes'
 import { Collection } from './cc/collection'
@@ -14,6 +14,7 @@ import { seedCostumes, seedNotes, seedProps } from './cc/seed'
 import type { Costume, Note, Prop } from './cc/kinds'
 import { TemplatePicker } from './cc/TemplatePicker'
 import { loadEvent, saveEvent, makeEvent, KEY, loadEvents, activeEvent, EVENTS_KEY, addEvent, type Events } from './cc/templates'
+import { Puller } from './cc/pull'
 import { History, trackCollection, trackStore } from './cc/history'
 import { loadPrefs, PREFS_KEY, type CareFlag, type Prefs } from './cc/access'
 const url = localStorage.getItem('choir-attendance/endpoint')
@@ -45,6 +46,9 @@ function applyScope(evs: Events | null) {
   store.adoptSessions(id); qn.setScope(id); for (const k of ['costumes', 'props', 'notes'] as const) cols[k].setScope(id)
 }
 applyScope(loadEvents(localStorage))
+const puller = new Puller(url, { events: sync2.events, costumes: cols.costumes, props: cols.props, notes: cols.notes, quicknotes: qn, care: cols.care, permissions: sync2.permissions } as never)
+puller.start(60000)
+const setEndpoint = (u: string) => { if (u) localStorage.setItem('choir-attendance/endpoint', u); else localStorage.removeItem('choir-attendance/endpoint'); location.reload() }
 const hist = new History(); trackStore(store, hist); trackCollection(cols.costumes, hist, 'costume'); trackCollection(cols.props, hist, 'prop')
 setInterval(() => { void qn.flush(); [...Object.values(cols), ...Object.values(sync2)].forEach(c => void c.flush()) }, CONFIG.syncRetryMs)
 function Root() {
@@ -52,8 +56,17 @@ function Root() {
   const [prefs, setPrefsS] = useState<Prefs>(() => loadPrefs(localStorage))
   const setEvs = (e: Events) => { localStorage.setItem(EVENTS_KEY, JSON.stringify(e)); saveEvent(localStorage, activeEvent(e)); for (const x of e.list) if (JSON.stringify(sync2.events.state.items.find(i => i.id === x.id)) !== JSON.stringify(x)) sync2.events.upsert(x); applyScope(e); setEvsS(e) }
   const setPrefs = (p: Prefs) => { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); if (JSON.stringify(p.caps) !== JSON.stringify(prefs.caps)) sync2.permissions.upsert({ id: 'care-flag-caps', ...p.caps } as { id: string }); setPrefsS(p) }
+  // After a pull: adopt events and permissions that arrived from other devices.
+  useEffect(() => puller.subscribe(() => {
+    if (puller.status.kind !== 'ok') return
+    const remote = sync2.events.state.items as unknown as (Events['list'][number])[]
+    setEvsS(cur => { if (!cur) return cur; const extra = remote.filter(r => !cur.list.some(l => l.id === r.id)); const list = cur.list.map(l => remote.find(r => r.id === l.id) ?? l)
+      if (!extra.length && JSON.stringify(list) === JSON.stringify(cur.list)) return cur; const n = { ...cur, list: [...list, ...extra] }; localStorage.setItem(EVENTS_KEY, JSON.stringify(n)); return n })
+    const caps = sync2.permissions.state.items.find(i => i.id === 'care-flag-caps') as unknown as (Prefs['caps'] & { id: string }) | undefined
+    if (caps) setPrefsS(p => { const { id: _id, ...c } = caps; if (JSON.stringify(c) === JSON.stringify(p.caps)) return p; const n = { ...p, caps: c as Prefs['caps'] }; localStorage.setItem(PREFS_KEY, JSON.stringify(n)); return n })
+  }), [])
   if (!evs) return <TemplatePicker onDone={e => setEvs(addEvent(null, e))} />
   const role = params.get('role'); const pr = role ? { ...prefs, role: role as Prefs['role'] } : prefs
-  return <AppShell store={store} qn={qn} ev={activeEvent(evs)} cols={cols} ctx={{ hist, evs, setEvs, prefs: pr, setPrefs }} initialShow={params.get('show') === 'props' ? 'props' : 'costumes'} initialTab={(params.get('tab') as Tab) ?? 'today'} initialNote={params.has('note')} />
+  return <AppShell store={store} qn={qn} ev={activeEvent(evs)} cols={cols} ctx={{ puller, endpoint: url ?? '', setEndpoint, hist, evs, setEvs, prefs: pr, setPrefs }} initialShow={params.get('show') === 'props' ? 'props' : 'costumes'} initialTab={(params.get('tab') as Tab) ?? 'today'} initialNote={params.has('note')} />
 }
 createRoot(document.getElementById('root')!).render(<Root />)
