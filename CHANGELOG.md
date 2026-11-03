@@ -32,3 +32,4 @@ All notable changes. Format: Keep a Changelog; SemVer.
 - Apps Script `Code.gs` draft (8 tabs, idempotent POST, GET pull with Manual Edits).
 - Tests for grouping, counts, store, queue (offline, loss, dedupe, drain, version check).
 - Headless screenshot script.
+- 2026-11-04: blueprint: U-01 universal-app rule locked.

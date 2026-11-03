@@ -34,3 +34,5 @@
 | Q77 | b (no hide-names switch) (2026-11-04, t19u–t21u) |
 | Q78 | a + b + Miracast/wireless display, HDMI, etc. (2026-11-04, t19u–t21u) |
 | Q79 | a (Windows, full browser, all connectivity) (2026-11-04, t19u–t21u) |
+
+| U-01 | Universal app | LOCKED 2026-11-04 (Steve t21u–t23u): CurtainCall suits any event that manages people and things. No choir-only wording is hard-wired; roles, parts, labels and categories are customisable, with event templates (Choir, Play, Dance, Sports day, Custom). |
