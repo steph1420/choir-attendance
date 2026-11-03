@@ -1,6 +1,8 @@
 # Changelog
 All notable changes. Format: Keep a Changelog; SemVer.
 
+## [stage1c] 2026-11-04 — Undo/redo (Today marks + Show edits); Settings (labels, create/switch events, teacher pick-list, role, care-flag permissions via capabilities); Members with ⚕ care flags gated by view/edit.careFlags; costumes linked to members.
+
 ## [stage1b] 2026-11-04 — Today header (summary cards, dismissable tip, template labels); real Costumes and Props (add/edit/status/filters, size tally, WhatsApp reminder copy); full Notes (text + checklist cards, tags, search, pin, quick notes merged). All saved locally and queued.
 
 ## [stage1a] 2026-11-04 — CurtainCall shell (dock + desktop rail), first-run template picker (U-01), quick notes tied to screen + timestamped + queued (offline mode), Excused violet. Costumes/Props/Notes placeholders.

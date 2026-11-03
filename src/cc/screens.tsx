@@ -13,7 +13,7 @@ function Sheet({ title, children, onClose }: { title: string; children: ReactNod
 }
 const F = ({ l, children }: { l: string; children: ReactNode }) => <label className="cc-f"><span className="cap">{l}</span>{children}</label>
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z]+/g, '-')
-export function CostumesScreen({ col, ev }: { col: Collection<Costume>; ev: string }) {
+export function CostumesScreen({ col, ev, members = [] }: { col: Collection<Costume>; ev: string; members?: { id: string; name: string }[] }) {
   const all = use(col); const [f, setF] = useState<keyof typeof costumeFilters>('All'); const [ed, setEd] = useState<Costume | null>(null)
   const list = all.filter(costumeFilters[f]); const t = sizeTally(all)
   return <div className="cc-page">
@@ -23,7 +23,8 @@ export function CostumesScreen({ col, ev }: { col: Collection<Costume>; ev: stri
     <div className="cc-list">{list.map(c => <button key={c.id} className="cc-item" onClick={() => setEd(c)}>
       <span className="cc-av">{c.size}</span><span className="cc-t"><b>{c.who}</b><small>{c.item} · size {c.size}</small></span><span className={`cc-st s-${slug(c.status)}`}>{c.status}</span></button>)}</div>
     {ed && <Sheet title={all.some(x => x.id === ed.id) ? 'Edit costume' : 'Add costume'} onClose={() => setEd(null)}>
-      <F l="Member"><input className="cc-in" value={ed.who} onChange={e => setEd({ ...ed, who: e.target.value })} /></F>
+      <F l="Member">{members.length ? <select className="cc-in" aria-label="Member" value={ed.memberId} onChange={e => setEd({ ...ed, memberId: e.target.value, who: members.find(m => m.id === e.target.value)?.name ?? '' })}><option value="">Choose…</option>{members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select>
+        : <input className="cc-in" value={ed.who} onChange={e => setEd({ ...ed, who: e.target.value })} />}</F>
       <F l="Costume"><input className="cc-in" value={ed.item} onChange={e => setEd({ ...ed, item: e.target.value })} /></F>
       <F l="Size"><input className="cc-in" value={ed.size} onChange={e => setEd({ ...ed, size: e.target.value.toUpperCase() })} /></F>
       <F l="Status"><select className="cc-in" value={ed.status} onChange={e => setEd({ ...ed, status: e.target.value as Costume['status'] })}>{COSTUME_STATUS.map(s => <option key={s}>{s}</option>)}</select></F>

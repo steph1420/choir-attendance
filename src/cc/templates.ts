@@ -19,3 +19,15 @@ export function loadEvent(kv: { getItem(k: string): string | null }): EventSetup
   const r = kv.getItem(KEY); return r ? JSON.parse(r) as EventSetup : null
 }
 export function saveEvent(kv: { setItem(k: string, v: string): void }, e: EventSetup) { kv.setItem(KEY, JSON.stringify(e)) }
+export const EVENTS_KEY = 'curtaincall/events/v1'
+export interface Events { active: string; list: (EventSetup & { id: string })[] }
+export function loadEvents(kv: { getItem(k: string): string | null }): Events | null {
+  const r = kv.getItem(EVENTS_KEY); if (r) return JSON.parse(r)
+  const e = loadEvent(kv); return e ? { active: 'e1', list: [{ ...e, id: 'e1' }] } : null
+}
+export function addEvent(evs: Events | null, e: EventSetup): Events {
+  const id = `e${(evs?.list.length ?? 0) + 1}-${Date.now().toString(36)}`
+  return { active: id, list: [...(evs?.list ?? []), { ...e, id }] }
+}
+export const activeEvent = (evs: Events) => evs.list.find(e => e.id === evs.active) ?? evs.list[0]
+export function updateEvent(evs: Events, id: string, p: Partial<EventSetup>): Events { return { ...evs, list: evs.list.map(e => e.id === id ? { ...e, ...p, labels: { ...e.labels, ...(p.labels ?? {}) } } : e) } }
