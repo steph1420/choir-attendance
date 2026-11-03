@@ -57,17 +57,17 @@ const secs=[...new Set(N.map(x=>x[1]))]
 let h=''
 if(!W) h+=''; 
 if(C==='1'){
-  h+=`<div class="hello">${ring(8,18)}<div><h1>Good morning ☀️</h1><p>Ms. Sample · Practice 10:30 · LF Hall<br>8 here so far. Tap a name to mark them present.</p></div></div>
+  h+=`<div class="hello">${ring(8,18)}<div><h1>Practice · 10:30</h1><p>LF Hall · Ms. Sample<br>8 / 18 marked · tap a name for Here</p></div></div>
   <div class="chips"><span class="chip on">By section</span><span class="chip">By part</span><span class="chip">A–Z</span><span class="chip">✓ Everyone else present</span></div><div style="overflow:hidden;flex:1">`
   const one=s=>{const k=N.filter(x=>x[1]===s);const d=k.every(x=>marks[x[0]]);let o=`<div class="sec"><i style="background:${col[s]}"></i>${s}<em>${k.filter(x=>marks[x[0]]).length}/${k.length}</em></div>`
-   if(d) o+=`<div class="done">🎉 <span><b>${s} is all done!</b> 5 here, 1 late. Lovely.</span></div>`
+   if(d) o+=`<div class="done">✓ <span><b>${s} complete</b> · 5 here · 1 late</span></div>`
    o+=`<div class="rows">`+k.map(([n],i)=>{const m=marks[n];if(s==='KG B'&&n==='Omar'&&!W)return `<div class="swipe"><div class="acts"><div style="background:var(--a)">Absent</div><div style="background:var(--l)">Late</div><div style="background:var(--e)">Excused</div></div><div class="row">${av(n,s)}<div class="n"><b>${n} Sample</b><small>← swipe for absent, late or excused</small></div></div></div>`
      return `<div class="row ${m||''}">${av(n,s,m?'':'opacity:.7')}<div class="n"><b>${n} Sample</b><small>${s}${n==='Mila'?' · Narrator':''}</small></div>${m?`<span class="tag ${m}">${{P:'Here',A:'Absent',L:'Late',E:'Excused'}[m]}</span>`:'<span class="tap">tap ✓</span>'}</div>`}).join('')+`</div>`;return o}
   h+=W?`<div class="cols"><div>${one('KG A')}${one('PREP A')}</div><div>${one('KG B')}${one('PREP B')}</div></div>`:one('KG A')+one('KG B')
   h+=`</div>`
 }
 if(C==='2'){
-  h+=`<div class="hello">${ring(9,18)}<div><h1>Who's here today?</h1><p>Tap a face when you see them. Hold a face for late, absent or excused.</p></div></div>
+  h+=`<div class="hello">${ring(9,18)}<div><h1>Practice · 10:30</h1><p>9 / 18 marked · tap a face for Here, hold for more</p></div></div>
   <div class="chips"><span class="chip on">All</span>${secs.map(s=>`<span class="chip"><span style="color:${col[s]}">●</span> ${s}</span>`).join('')}</div><div style="overflow:hidden;flex:1;position:relative">`
   const fs=s=>`<div class="sec"><i style="background:${col[s]}"></i>${s}<em>${N.filter(x=>x[1]===s&&marks[x[0]]).length}/${N.filter(x=>x[1]===s).length}</em></div><div class="faces">`+N.filter(x=>x[1]===s).map(([n])=>{const m=marks[n];return `<div class="face ${m||''}">${m&&m!=='P'?`<span class="badge" style="background:var(--${m.toLowerCase()})">${m}</span>`:''}${av(n,s)}<b>${n}</b></div>`}).join('')+`</div>`
   h+=(W?secs.map(fs).join(''):fs('KG A')+fs('KG B')+fs('PREP A'))
@@ -75,11 +75,11 @@ if(C==='2'){
 }
 if(C==='3'){
   const miss=[['Leo','KG B','A',''],['Ishan','KG A','L','10:42'],['Sana','PREP A','E','Sick']]
-  const left=`<div class="big"><p>Practice · 10:30 · everyone starts as here</p><h2>15 here · 3 missing</h2><div class="strip" style="padding:10px 0 0">${N.slice(0,12).map(x=>av(x[0],x[1])).join('')}<span style="margin-left:16px;color:var(--t2);align-self:center">+3</span></div></div>
-   <div class="search">🔍 Who's not here? Type a name or tap below</div>`+(W?`<div class="hint" style="line-height:1.6">💡 Everyone starts as <b>here</b>. You only touch the few who aren't.<br>Tap a face to mark them missing, then tap why. Late arrivals get a one-tap "Arrived now".<br>Full controls (remarks, left early, history) stay one tap away on each name.</div>`:'')
+  const left=`<div class="big"><p>Practice · 10:30 · all start as Here</p><h2>15 / 18 here</h2><div class="strip" style="padding:10px 0 0">${N.slice(0,12).map(x=>av(x[0],x[1])).join('')}<span style="margin-left:16px;color:var(--t2);align-self:center">+3</span></div></div>
+   <div class="search">🔍 Who's not here? Type a name or tap below</div>`+(W?`<div class="hint" style="line-height:1.6">All start as Here. Mark only who is missing, then pick the reason.<br>Late: one tap for Arrived. Remarks, left early and history: tap the name.</div>`:'')
   const right=`<div class="sec">MISSING TODAY<em>tap to change why</em></div><div class="miss">`+miss.map(([n,s,m,w])=>`<div class="mrow">${av(n,s)}<div style="flex:1"><b>${n} Sample</b> <span class="tag ${m}">${{A:'Absent',L:'Late',E:'Excused'}[m]}${w?' · '+w:''}</span><div class="reasons">${m==='E'?['Sick','Family','Exam','Other'].map((r,i)=>`<span class="${i==0?'on':''}">${r}</span>`).join(''):m==='L'?'<span class="on">Arrived 10:42</span><span>Mark here</span>':'<span>Late</span><span>Excused</span><span>Undo</span>'}</div></div></div>`).join('')+`</div>
    <div class="sec">QUICK PICK<em>tap anyone who's missing</em></div><div class="faces" style="grid-template-columns:repeat(auto-fill,minmax(76px,1fr))">${N.filter(x=>!['Leo','Ishan','Sana'].includes(x[0])).slice(0,W?15:8).map(([n,s])=>`<div class="face P" style="padding:8px 2px">${av(n,s,'width:44px;height:44px;font-size:15px')}<b>${n}</b></div>`).join('')}</div>
-   <div class="cta">Looks right, save attendance 💙</div>`
+   <div class="cta">Save attendance</div>`
   h+=W?`<div class="cols" style="padding-top:20px"><div>${left}</div><div>${right}</div></div>`:`<div style="padding-top:14px">${left}${right}</div>`
 }
 if(!W) h+=`<div class="dock"><span class="on"><b>☀</b>Today</span><span><b>🎭</b>Show</span><span><b>👥</b>Singers</span><span><b>📝</b>Notes</span><span><b>📊</b>Reports</span></div>`

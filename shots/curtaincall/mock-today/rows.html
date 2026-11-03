@@ -1,0 +1,65 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root{--bg:#10131b;--s1:#171b26;--s2:#1e2332;--line:#2a3042;--t:#eef1f7;--t2:#aab1c2;--t3:#7b8397;--blue:#4c8dff;--p:#3ecf8e;--a:#ff7a7a;--l:#f5b74e;--e:#a78bfa;--kga:#5aa9ff;--kgb:#ff8fb1;--prepa:#7ee0b5;--prepb:#ffc36b}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--t);font:15px/1.4 "Segoe UI",system-ui,sans-serif;height:100vh;overflow:hidden;display:flex}
+.rail{width:220px;background:#0c0f16;border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px;flex:none}.rail h3{color:var(--blue);font-size:18px;padding:0 8px}.rail small{color:var(--t3);padding:0 8px 14px}.rail a{padding:10px 12px;border-radius:10px;color:var(--t2)}.rail a.on{background:var(--s2);color:var(--t)}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.dock{position:absolute;bottom:0;left:0;right:0;height:72px;background:#0c0f16;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;color:var(--t3);font-size:12px;z-index:9}.dock b{display:block;text-align:center;font-size:20px}.dock .on{color:var(--blue)}
+.top{padding:18px 18px 10px;display:flex;align-items:center;gap:10px}.top h1{font-size:21px;font-weight:650;flex:1}.top .ct{font-size:15px;color:var(--t2);font-variant-numeric:tabular-nums}.ib{width:38px;height:38px;border-radius:11px;background:var(--s1);display:grid;place-items:center;color:var(--t3)}
+.bar{margin:0 18px 10px;height:5px;border-radius:9px;background:var(--s2);overflow:hidden;display:flex}.bar i{height:100%}
+.seg{margin:0 18px 8px;display:flex;background:var(--s1);border-radius:11px;padding:3px}.seg span{flex:1;text-align:center;padding:6px;border-radius:9px;font-size:13px;color:var(--t3)}.seg .on{background:var(--s2);color:var(--t)}
+.av{border-radius:50%;display:grid;place-items:center;font-weight:700;flex:none;color:#10131b}
+.sh{display:flex;align-items:center;gap:10px;padding:12px 18px 8px}.sh b{font-size:14px;font-weight:650;letter-spacing:.03em}.sh small{color:var(--t3);font-size:12px}.sh .all{margin-left:auto;font-size:13px;font-weight:650;padding:6px 12px;border-radius:99px;color:var(--p);background:color-mix(in srgb,var(--p) 14%,transparent)}.sh .all.done{color:var(--t3);background:var(--s1)}
+.list{display:flex;flex-direction:column;padding:0 14px}.r{display:flex;align-items:center;gap:12px;position:relative}.r .n{flex:1;min-width:0}.r .n b{font-weight:600}.r .n small{display:block;color:var(--t3);font-size:12px}
+.pill{font-size:12px;font-weight:650;padding:4px 11px;border-radius:99px}
+.tag-P{color:var(--p);background:color-mix(in srgb,var(--p) 15%,transparent)}.tag-A{color:var(--a);background:color-mix(in srgb,var(--a) 15%,transparent)}.tag-L{color:var(--l);background:color-mix(in srgb,var(--l) 15%,transparent)}.tag-E{color:var(--e);background:color-mix(in srgb,var(--e) 16%,transparent)}.tag-{color:var(--t3);border:1px dashed var(--line)}
+.lab{position:absolute;right:12px;bottom:${0}px}
+.pane{width:360px;flex:none;border-left:1px solid var(--line);background:#131722;padding:22px;display:flex;flex-direction:column;gap:14px}
+.btns{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.btns div{height:48px;border-radius:12px;display:grid;place-items:center;font-weight:650;font-size:14px;background:var(--s1);color:var(--t2)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips span{font-size:12px;padding:5px 11px;border-radius:99px;background:var(--s2);color:var(--t2)}.chips .on{background:color-mix(in srgb,var(--e) 25%,transparent);color:var(--t)}
+.cap{font-size:11px;letter-spacing:.1em;color:var(--t3);text-transform:uppercase}
+</style></head><body><div class="main" id="m"></div><script>
+const q=new URLSearchParams(location.search),V=q.get('v'),W=q.get('w')==='wide'
+const N=[['Mila','KG A','Narrator'],['Theo','KG A',''],['Ava','KG A','Solo'],['Ishan','KG A',''],['Zara','KG A',''],['Kabir','KG A',''],['Noor','KG B',''],['Leo','KG B',''],['Rhea','KG B','Lead'],['Omar','KG B',''],['Tara','KG B',''],['Neel','PREP A',''],['Sana','PREP A',''],['Eli','PREP A',''],['Maya','PREP A',''],['Ruby','PREP A',''],['Arjun','PREP B',''],['Ivy','PREP B','']]
+const col={'KG A':'var(--kga)','KG B':'var(--kgb)','PREP A':'var(--prepa)','PREP B':'var(--prepb)'}
+const M={Mila:'P',Theo:'P',Ava:'P',Ishan:'L',Zara:'P',Kabir:'P',Noor:'P',Leo:'A',Rhea:'P',Sana:'E'}
+const L={P:'Here',A:'Absent',L:'Late',E:'Excused','':'Mark'}
+const secs=['KG A','KG B','PREP A','PREP B']
+const av=(n,s,z=44)=>`<div class="av" style="width:${z}px;height:${z}px;font-size:${z*.34}px;background:${col[s]}">${n.slice(0,2).toUpperCase()}</div>`
+const ring=(m,t,c,z=34)=>{const r=z/2-4,C=2*Math.PI*r;return `<svg width="${z}" height="${z}"><circle cx="${z/2}" cy="${z/2}" r="${r}" stroke="#2a3042" stroke-width="4" fill="none"/><circle cx="${z/2}" cy="${z/2}" r="${r}" stroke="${c}" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="${C*m/t} ${C}" transform="rotate(-90 ${z/2} ${z/2})"/></svg>`}
+const cnt=s=>{const k=N.filter(x=>x[1]===s);return [k.filter(x=>M[x[0]]).length,k.length]}
+const marked=Object.keys(M).length,tot=N.length,cs=k=>Object.values(M).filter(x=>x===k).length
+const head=`<div class="top"><h1>Practice · 10:30</h1><span class="ct">${marked} / ${tot}</span><div class="ib">↶</div><div class="ib">⚙</div></div>
+<div class="bar"><i style="width:${cs('P')/tot*100}%;background:var(--p)"></i><i style="width:${cs('L')/tot*100}%;background:var(--l)"></i><i style="width:${cs('E')/tot*100}%;background:var(--e)"></i><i style="width:${cs('A')/tot*100}%;background:var(--a)"></i></div>
+<div class="seg"><span class="on">Section</span><span>Part</span><span>A–Z</span></div>`
+const secHead=(s,withRing=true)=>{const [m,t]=cnt(s);return `<div class="sh">${withRing?ring(m,t,col[s]):`<i style="width:10px;height:10px;border-radius:50%;background:${col[s]}"></i>`}<b>${s}</b><small>${m} / ${t}</small><span class="all ${m===t?'done':''}">${m===t?'✓ All marked':'All here'}</span></div>`}
+let rowFn, wideMode='cols', pitch=''
+if(V==='1'){ // comfortable, avatar, tinted fill, swipe
+  rowFn=([n,s,p],i)=>{const m=M[n]||'';const sw=n==='Omar'&&!W;return `<div style="position:relative;margin-bottom:8px;border-radius:16px;overflow:hidden">${sw?`<div style="position:absolute;inset:0;display:flex;justify-content:flex-end">${['A','L','E'].map(k=>`<div style="width:76px;display:grid;place-items:center;font-size:12px;font-weight:700;color:#10131b;background:var(--${k.toLowerCase()})">${L[k]}</div>`).join('')}</div>`:''}
+  <div class="r" style="padding:12px;border-radius:16px;background:${m?`color-mix(in srgb,var(--${m.toLowerCase()}) 13%,var(--s1))`:'var(--s1)'};${sw?'transform:translateX(-228px)':''}">${av(n,s)}<div class="n"><b>${n} Sample</b><small>${p||s}</small></div>${m?`<span class="pill tag-${m}">${L[m]}</span>`:`<span style="color:var(--t3);font-size:12px">tap · swipe ←</span>`}</div></div>`}
+}
+if(V==='2'){ // compact, no avatar, left bar, tap chip to cycle
+  wideMode='pane'
+  rowFn=([n,s,p])=>{const m=M[n]||'';return `<div class="r" style="padding:9px 12px 9px 14px;border-bottom:1px solid var(--line);${n==='Leo'&&W?'background:var(--s2);border-radius:10px':''}"><i style="position:absolute;left:0;top:6px;bottom:6px;width:4px;border-radius:4px;background:${m?`var(--${m.toLowerCase()})`:'var(--line)'}"></i><div class="n"><b>${n} Sample</b>${p?` <small style="display:inline;margin-left:6px">${p}</small>`:''}</div><span class="pill tag-${m}" style="min-width:78px;text-align:center">${L[m]} ${m?'⟳':''}</span></div>`}
+}
+if(V==='3'){ // comfortable, avatar, status pill, expand in place
+  rowFn=([n,s,p])=>{const m=M[n]||'';const ex=n===(W?'Sana':'Leo');return `<div style="margin-bottom:8px;border-radius:16px;background:var(--s1);border:1px solid ${ex?'var(--line)':'transparent'}"><div class="r" style="padding:11px 12px">${av(n,s,40)}<div class="n"><b>${n} Sample</b><small>${p||s}</small></div>${m?`<span class="pill tag-${m}">${L[m]}</span>`:`<span class="pill tag-P" style="opacity:.0">x</span><span class="pill" style="border:1px solid var(--line);color:var(--t2)">✓ Here</span>`}<span style="color:var(--t3);width:18px;text-align:center">${ex?'▴':'▾'}</span></div>
+  ${ex?`<div style="padding:0 12px 12px;display:flex;flex-direction:column;gap:10px"><div class="btns">${['P','A','L','E'].map(k=>`<div style="${k===m?`background:color-mix(in srgb,var(--${k.toLowerCase()}) 22%,transparent);color:var(--${k.toLowerCase()})`:''}">${L[k]}</div>`).join('')}</div><div class="chips">${['Sick','Family','Exam','Other'].map((r,i)=>`<span class="${i?'':'on'}">${r}</span>`).join('')}</div><div style="display:flex;gap:8px;color:var(--t3);font-size:13px"><span>＋ Remark</span><span>·</span><span>Left early</span><span>·</span><span>History</span></div></div>`:''}</div>`}
+}
+if(V==='4'){ // compact w/ small avatar, left bar + pill, swipe; wide pane
+  wideMode='pane'
+  rowFn=([n,s,p])=>{const m=M[n]||'';return `<div class="r" style="padding:7px 10px;margin-bottom:4px;border-radius:12px;background:${m?'var(--s1)':'transparent'};box-shadow:inset 3px 0 0 ${m?`var(--${m.toLowerCase()})`:'transparent'};${n==='Sana'&&W?'outline:1px solid var(--blue)':''}">${av(n,s,30)}<div class="n"><b style="font-size:14px">${n} Sample</b></div>${p?`<small style="color:var(--t3);font-size:12px">${p}</small>`:''}${m&&m!=='P'?`<span class="pill tag-${m}" style="padding:2px 9px">${L[m]}</span>`:m?`<span style="color:var(--p);font-weight:700;width:22px;text-align:center">✓</span>`:`<span style="width:22px;height:22px;border-radius:50%;border:2px solid var(--line)"></span>`}</div>`}
+}
+const section=s=>secHead(s)+`<div class="list">${N.filter(x=>x[1]===s).map(rowFn).join('')}</div>`
+const pane=nm=>{const x=N.find(y=>y[0]===nm),m=M[nm];return `<div class="pane"><div class="cap">Selected</div><div style="display:flex;gap:12px;align-items:center">${av(x[0],x[1],56)}<div><div style="font-size:20px;font-weight:650">${nm} Sample</div><div style="color:var(--t3)">${x[1]}${x[2]?' · '+x[2]:''}</div></div></div>
+<div class="btns">${['P','A','L','E'].map(k=>`<div style="${k===m?`background:color-mix(in srgb,var(--${k.toLowerCase()}) 22%,transparent);color:var(--${k.toLowerCase()})`:''}">${L[k]}</div>`).join('')}</div>
+<div class="cap">Reason</div><div class="chips">${['Sick','Family','Exam','Travel','Other'].map((r,i)=>`<span class="${m==='E'&&!i?'on':''}">${r}</span>`).join('')}</div>
+<div class="cap">Remark</div><div style="height:70px;border-radius:12px;background:var(--s1);border:1px solid var(--line);padding:10px;color:var(--t3);font-size:13px">Add a remark…</div>
+<div style="display:flex;justify-content:space-between;color:var(--t2);font-size:14px"><span>Left early</span><span style="width:40px;height:24px;border-radius:99px;background:var(--s2)"></span></div>
+<div class="cap">Last 5 sessions</div><div style="display:flex;gap:6px">${['P','P','E','P','A'].map(k=>`<span class="pill tag-${k}">${k}</span>`).join('')}</div></div>`}
+let h=''
+if(!W) h=head+`<div style="overflow:hidden;flex:1">${section('KG A')}${section('KG B')}</div><div class="dock"><span class="on"><b>☀</b>Today</span><span><b>🎭</b>Show</span><span><b>👥</b>Singers</span><span><b>📝</b>Notes</span><span><b>📊</b>Reports</span></div>`
+else if(wideMode==='cols') h=head+`<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 14px;overflow:hidden;flex:1;padding:0 8px"><div>${section('KG A')}${section('PREP A')}</div><div>${section('KG B')}${section('PREP B')}</div></div>`
+else h=`<div style="display:flex;flex:1;overflow:hidden"><div style="flex:1;overflow:hidden;display:flex;flex-direction:column">${head}<div style="overflow:hidden">${secs.map(section).join('')}</div></div>${pane(V==='2'?'Leo':'Sana')}</div>`
+document.getElementById('m').innerHTML=h
+if(W) document.body.insertAdjacentHTML('afterbegin',`<nav class="rail"><h3>CurtainCall</h3><small>Annual Day · Choir</small><a class="on">☀ Today</a><a>🎭 Show</a><a>👥 Singers</a><a>📝 Notes</a><a>📊 Reports</a><span style="flex:1"></span><a>⚙ Settings</a></nav>`)
+</script></body></html>
