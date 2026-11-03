@@ -3,8 +3,8 @@ Steve has not answered these. Each lists the default this blueprint assumes, mar
 
 | Q | Question | Options | Default (PROPOSED) |
 |---|---|---|---|
-| Q58 | Tip and IndexRail kit specs (04-UI-PRINCIPLES) | a) adopt drafts, Kiwi to add to kit · b) keep app-local | a |
-| Q59 | Rail grab handle side memory | a) per device · b) reset each session | a |
+| Q58 | Tip accent colour | a) Driftline blue · b) cyan | a |
+| Q59 | Excused violet clashes with kit "special role" violet | a) add a small role icon next to the colour, not colour alone · b) give special roles a different colour | a |
 | Q60 | Spine (Production, Item, Scene, Part) in v1 | a) yes · b) later | a |
 | Q61 | Where the show plan lives | a) Show tab, Settings to gear · b) inside Members | a |
 | Q62 | Must features before 2027-01-30 | a) call list, casting, standing, costumes, props, check-in, run sheet · b) attendance only | a |

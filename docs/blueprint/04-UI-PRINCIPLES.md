@@ -36,7 +36,7 @@ Use the vendored kit (`src/driftline/`) tokens and components only; **Driftline 
 | Q55 | trial: no debug label; stars and remark side by side |
 | Q56a | undo history as status chips; later steps greyed |
 
-## PROPOSED kit additions (Q58a) — drafts for Kiwi
-Kiwi has not yet published these specs (kit `TODO.md` lists IndexRail only). Drafts below follow the Driftline token rules; Kiwi to confirm, only Steve locks.
-- **Tip:** one-time dismissable hint, inline in the list (not floating). Leading lightbulb icon + text + × button; translucent surface, Driftline blue hairline; dismissed on × or on first use of the hinted action; remembers per device; reduced-motion: no slide.
-- **IndexRail:** A–Z rail overlaid on the list edge, ~20 px wide, shows only letters present; tap/drag scrubs with a letter bubble; grab handle (6-dot) at top to drag to left or right edge, side remembered per device; hidden outside A–Z mode (Q44a); keyboard: letter keys jump.
+## PROPOSED kit additions — Kiwi's specs (Driftline blue, not cyan; accent per Q58a)
+- **Tip:** a pill with a sparkle icon and an × (48 pt hit area); raised surface with a 30% hairline border in Driftline blue; fades in over 600 ms; dismissed by ×, by the first long-press, or after 3 unused sightings (developer option); dismiss = shrink + fade out in 150 ms; dismissal saved per tip ID per device; "Reset tips" in developer options; at most one tip per screen; lightbulb icon instead of sparkle as a developer option.
+- **IndexRail handle:** a 4×28 pt pill below the last letter, 48 pt hit area; drag starts on a 250 ms hold or a sideways drag past 12 pt; while dragging it turns Driftline blue with a light haptic and a ghost outline shows at the target edge; snaps to the left or right edge only, 200 ms spring, no bounce; side saved per device (default right); on the left it shifts the avatars by the rail width. Rail otherwise as Q54a, shown only in A–Z mode (Q44a).
+- **Excused violet vs kit "special role" violet:** see Q59 (PROPOSED a: small role icon beside the colour, so meaning is not colour alone).
