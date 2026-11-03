@@ -1,0 +1,88 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg:#10131b;--s1:#171b26;--s2:#1e2332;--line:#2a3042;--t:#eef1f7;--t2:#aab1c2;--t3:#7b8397;--blue:#4c8dff;--p:#3ecf8e;--a:#ff7a7a;--l:#f5b74e;--e:#a78bfa;
+--kga:#5aa9ff;--kgb:#ff8fb1;--prepa:#7ee0b5;--prepb:#ffc36b}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--t);font:15px/1.4 "Segoe UI",system-ui,sans-serif;height:100vh;overflow:hidden;display:flex}
+.rail{width:220px;background:#0c0f16;border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px;flex:none}
+.rail h3{color:var(--blue);font-size:18px;padding:0 8px}.rail small{color:var(--t3);padding:0 8px 14px}.rail a{padding:10px 12px;border-radius:10px;color:var(--t2)}.rail a.on{background:var(--s2);color:var(--t)}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.dock{position:absolute;bottom:0;left:0;right:0;height:72px;background:#0c0f16;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;color:var(--t3);font-size:12px}
+.dock b{display:block;text-align:center;font-size:20px}.dock .on{color:var(--blue)}
+.hello{padding:22px 20px 10px;display:flex;align-items:center;gap:16px}
+.hello h1{font-size:24px;font-weight:650}.hello p{color:var(--t2);font-size:14px;margin-top:2px}
+.ring{width:72px;height:72px;flex:none;position:relative}.ring span{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:17px}.ring span small{display:block;font-size:10px;color:var(--t3);font-weight:500;margin-top:-4px}
+.chips{display:flex;gap:8px;padding:4px 20px 12px;flex-wrap:wrap}.chip{padding:6px 12px;border-radius:99px;background:var(--s1);border:1px solid var(--line);font-size:13px;color:var(--t2)}.chip.on{background:color-mix(in srgb,var(--blue) 18%,transparent);border-color:var(--blue);color:var(--t)}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:15px;flex:none;color:#10131b}
+.sec{display:flex;align-items:center;gap:10px;padding:14px 20px 8px;font-size:13px;font-weight:650;letter-spacing:.04em;color:var(--t2)}.sec i{width:10px;height:10px;border-radius:50%}
+.sec em{margin-left:auto;font-style:normal;color:var(--t3);font-weight:500}
+.done{margin:4px 16px 8px;padding:12px 14px;border-radius:14px;background:linear-gradient(90deg,color-mix(in srgb,var(--p) 22%,transparent),transparent);color:var(--t);font-size:14px;display:flex;gap:10px;align-items:center}
+/* C1 rows */
+.rows{display:grid;gap:8px;padding:0 16px}.row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:var(--s1);border:1px solid transparent}
+.row .n{flex:1}.row .n b{font-weight:600}.row .n small{display:block;color:var(--t3);font-size:12px}
+.row.P{background:color-mix(in srgb,var(--p) 12%,var(--s1));border-color:color-mix(in srgb,var(--p) 35%,transparent)}
+.row.A{background:color-mix(in srgb,var(--a) 10%,var(--s1))}.row.L{background:color-mix(in srgb,var(--l) 10%,var(--s1))}.row.E{background:color-mix(in srgb,var(--e) 12%,var(--s1))}
+.tag{font-size:12px;font-weight:650;padding:4px 10px;border-radius:99px}.tag.P{color:var(--p);background:color-mix(in srgb,var(--p) 15%,transparent)}.tag.A{color:var(--a);background:color-mix(in srgb,var(--a) 15%,transparent)}.tag.L{color:var(--l);background:color-mix(in srgb,var(--l) 15%,transparent)}.tag.E{color:var(--e);background:color-mix(in srgb,var(--e) 15%,transparent)}
+.tap{font-size:12px;color:var(--t3)}
+.swipe{position:relative;overflow:hidden;border-radius:16px}.swipe .acts{position:absolute;inset:0;display:flex;justify-content:flex-end}.swipe .acts div{width:72px;display:grid;place-items:center;font-size:12px;font-weight:650;color:#10131b}
+.swipe .row{transform:translateX(-216px);position:relative}
+.hint{margin:12px 16px;padding:10px 14px;border-radius:12px;background:var(--s1);color:var(--t2);font-size:13px}
+/* C2 faces */
+.faces{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:12px;padding:0 16px}
+.face{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:18px;background:var(--s1);position:relative}
+.face .av{width:60px;height:60px;font-size:20px;opacity:.55;filter:saturate(.5)}.face b{font-size:13px;font-weight:600;color:var(--t2)}
+.face.P .av{opacity:1;filter:none;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--p)}.face.P b{color:var(--t)}
+.face.A .av{opacity:.8;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--a)}.face.L .av{opacity:1;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--l)}.face.E .av{opacity:.9;box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--e)}
+.face .badge{position:absolute;top:8px;right:14px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;color:#10131b}
+.pop{position:absolute;z-index:5;background:var(--s2);border:1px solid var(--line);border-radius:18px;padding:8px;display:flex;gap:6px;box-shadow:0 12px 40px #0009}
+.pop div{padding:10px 12px;border-radius:12px;font-size:13px;font-weight:650;text-align:center;min-width:64px}
+/* C3 missing */
+.big{margin:8px 16px 14px;padding:18px;border-radius:22px;background:linear-gradient(135deg,color-mix(in srgb,var(--blue) 25%,var(--s1)),var(--s1));}
+.big h2{font-size:30px;font-weight:700}.big p{color:var(--t2)}
+.search{margin:0 16px 12px;height:48px;border-radius:14px;background:var(--s1);border:1px solid var(--line);display:flex;align-items:center;padding:0 14px;color:var(--t3);gap:8px}
+.miss{display:grid;gap:8px;padding:0 16px 10px}.mrow{display:flex;gap:12px;align-items:center;padding:12px;border-radius:16px;background:var(--s1)}
+.reasons{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.reasons span{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--s2);color:var(--t2)}.reasons span.on{background:color-mix(in srgb,var(--e) 25%,transparent);color:var(--t)}
+.strip{display:flex;gap:-8px;padding:0 20px}.strip .av{width:34px;height:34px;font-size:12px;margin-right:-8px;box-shadow:0 0 0 2px var(--bg)}
+.cta{margin:14px 16px;height:54px;border-radius:16px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:650;font-size:16px}
+.wide .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.wide .hello{padding:28px 32px 12px}.wide .chips{padding:4px 32px 14px}
+.label{position:absolute;top:10px;right:14px;font-size:11px;color:var(--t3);background:var(--s1);padding:3px 8px;border-radius:8px;z-index:9}
+</style></head><body><div class="main" id="m"></div>
+<script>
+const q=new URLSearchParams(location.search), C=q.get('c'), W=q.get('w')==='wide'
+const N=[['Mila','KG A'],['Theo','KG A'],['Ava','KG A'],['Ishan','KG A'],['Zara','KG A'],['Kabir','KG A'],['Noor','KG B'],['Leo','KG B'],['Rhea','KG B'],['Omar','KG B'],['Tara','KG B'],['Neel','PREP A'],['Sana','PREP A'],['Eli','PREP A'],['Maya','PREP A'],['Ruby','PREP A'],['Arjun','PREP B'],['Ivy','PREP B']]
+const col={'KG A':'var(--kga)','KG B':'var(--kgb)','PREP A':'var(--prepa)','PREP B':'var(--prepb)'}
+const ini=n=>n.slice(0,2).toUpperCase(); const av=(n,s,st='')=>`<div class="av" style="background:${col[s]};${st}">${ini(n)}</div>`
+const ring=(v,t,lab)=>{const r=30,c=2*Math.PI*r;return `<div class="ring"><svg width="72" height="72"><circle cx="36" cy="36" r="${r}" stroke="#2a3042" stroke-width="7" fill="none"/><circle cx="36" cy="36" r="${r}" stroke="url(#g)" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="${c*v/t} ${c}" transform="rotate(-90 36 36)"/><defs><linearGradient id="g"><stop offset="0" stop-color="#4c8dff"/><stop offset="1" stop-color="#3ecf8e"/></linearGradient></defs></svg><span><div>${v}<small>of ${t}</small></div></span></div>`}
+const marks={Mila:'P',Theo:'P',Ava:'P',Ishan:'L',Zara:'P',Kabir:'P',Noor:'P',Leo:'A',Rhea:'P'}
+const secs=[...new Set(N.map(x=>x[1]))]
+let h=''
+if(!W) h+=''; 
+if(C==='1'){
+  h+=`<div class="hello">${ring(8,18)}<div><h1>Good morning ☀️</h1><p>Ms. Sample · Practice 10:30 · LF Hall<br>8 here so far. Tap a name to mark them present.</p></div></div>
+  <div class="chips"><span class="chip on">By section</span><span class="chip">By part</span><span class="chip">A–Z</span><span class="chip">✓ Everyone else present</span></div><div style="overflow:hidden;flex:1">`
+  const one=s=>{const k=N.filter(x=>x[1]===s);const d=k.every(x=>marks[x[0]]);let o=`<div class="sec"><i style="background:${col[s]}"></i>${s}<em>${k.filter(x=>marks[x[0]]).length}/${k.length}</em></div>`
+   if(d) o+=`<div class="done">🎉 <span><b>${s} is all done!</b> 5 here, 1 late. Lovely.</span></div>`
+   o+=`<div class="rows">`+k.map(([n],i)=>{const m=marks[n];if(s==='KG B'&&n==='Omar'&&!W)return `<div class="swipe"><div class="acts"><div style="background:var(--a)">Absent</div><div style="background:var(--l)">Late</div><div style="background:var(--e)">Excused</div></div><div class="row">${av(n,s)}<div class="n"><b>${n} Sample</b><small>← swipe for absent, late or excused</small></div></div></div>`
+     return `<div class="row ${m||''}">${av(n,s,m?'':'opacity:.7')}<div class="n"><b>${n} Sample</b><small>${s}${n==='Mila'?' · Narrator':''}</small></div>${m?`<span class="tag ${m}">${{P:'Here',A:'Absent',L:'Late',E:'Excused'}[m]}</span>`:'<span class="tap">tap ✓</span>'}</div>`}).join('')+`</div>`;return o}
+  h+=W?`<div class="cols"><div>${one('KG A')}${one('PREP A')}</div><div>${one('KG B')}${one('PREP B')}</div></div>`:one('KG A')+one('KG B')
+  h+=`</div>`
+}
+if(C==='2'){
+  h+=`<div class="hello">${ring(9,18)}<div><h1>Who's here today?</h1><p>Tap a face when you see them. Hold a face for late, absent or excused.</p></div></div>
+  <div class="chips"><span class="chip on">All</span>${secs.map(s=>`<span class="chip"><span style="color:${col[s]}">●</span> ${s}</span>`).join('')}</div><div style="overflow:hidden;flex:1;position:relative">`
+  const fs=s=>`<div class="sec"><i style="background:${col[s]}"></i>${s}<em>${N.filter(x=>x[1]===s&&marks[x[0]]).length}/${N.filter(x=>x[1]===s).length}</em></div><div class="faces">`+N.filter(x=>x[1]===s).map(([n])=>{const m=marks[n];return `<div class="face ${m||''}">${m&&m!=='P'?`<span class="badge" style="background:var(--${m.toLowerCase()})">${m}</span>`:''}${av(n,s)}<b>${n}</b></div>`}).join('')+`</div>`
+  h+=(W?secs.map(fs).join(''):fs('KG A')+fs('KG B')+fs('PREP A'))
+  h+=`<div class="pop" style="left:${W?'380px':'60px'};top:${W?'215px':'225px'}"><div style="background:color-mix(in srgb,var(--p) 20%,transparent);color:var(--p)">✓ Here</div><div style="background:color-mix(in srgb,var(--l) 20%,transparent);color:var(--l)">Late</div><div style="background:color-mix(in srgb,var(--a) 20%,transparent);color:var(--a)">Absent</div><div style="background:color-mix(in srgb,var(--e) 20%,transparent);color:var(--e)">Excused</div></div></div>`
+}
+if(C==='3'){
+  const miss=[['Leo','KG B','A',''],['Ishan','KG A','L','10:42'],['Sana','PREP A','E','Sick']]
+  const left=`<div class="big"><p>Practice · 10:30 · everyone starts as here</p><h2>15 here · 3 missing</h2><div class="strip" style="padding:10px 0 0">${N.slice(0,12).map(x=>av(x[0],x[1])).join('')}<span style="margin-left:16px;color:var(--t2);align-self:center">+3</span></div></div>
+   <div class="search">🔍 Who's not here? Type a name or tap below</div>`+(W?`<div class="hint" style="line-height:1.6">💡 Everyone starts as <b>here</b>. You only touch the few who aren't.<br>Tap a face to mark them missing, then tap why. Late arrivals get a one-tap "Arrived now".<br>Full controls (remarks, left early, history) stay one tap away on each name.</div>`:'')
+  const right=`<div class="sec">MISSING TODAY<em>tap to change why</em></div><div class="miss">`+miss.map(([n,s,m,w])=>`<div class="mrow">${av(n,s)}<div style="flex:1"><b>${n} Sample</b> <span class="tag ${m}">${{A:'Absent',L:'Late',E:'Excused'}[m]}${w?' · '+w:''}</span><div class="reasons">${m==='E'?['Sick','Family','Exam','Other'].map((r,i)=>`<span class="${i==0?'on':''}">${r}</span>`).join(''):m==='L'?'<span class="on">Arrived 10:42</span><span>Mark here</span>':'<span>Late</span><span>Excused</span><span>Undo</span>'}</div></div></div>`).join('')+`</div>
+   <div class="sec">QUICK PICK<em>tap anyone who's missing</em></div><div class="faces" style="grid-template-columns:repeat(auto-fill,minmax(76px,1fr))">${N.filter(x=>!['Leo','Ishan','Sana'].includes(x[0])).slice(0,W?15:8).map(([n,s])=>`<div class="face P" style="padding:8px 2px">${av(n,s,'width:44px;height:44px;font-size:15px')}<b>${n}</b></div>`).join('')}</div>
+   <div class="cta">Looks right, save attendance 💙</div>`
+  h+=W?`<div class="cols" style="padding-top:20px"><div>${left}</div><div>${right}</div></div>`:`<div style="padding-top:14px">${left}${right}</div>`
+}
+if(!W) h+=`<div class="dock"><span class="on"><b>☀</b>Today</span><span><b>🎭</b>Show</span><span><b>👥</b>Singers</span><span><b>📝</b>Notes</span><span><b>📊</b>Reports</span></div>`
+document.getElementById('m').innerHTML=h
+if(W) document.body.classList.add('wide'), document.body.insertAdjacentHTML('afterbegin',`<nav class="rail"><h3>CurtainCall</h3><small>Annual Day · Choir</small><a class="on">☀ Today</a><a>🎭 Show</a><a>👥 Singers</a><a>📝 Notes</a><a>📊 Reports</a><span style="flex:1"></span><a>⚙ Settings</a></nav>`)
+</script></body></html>
