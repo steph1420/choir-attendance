@@ -3,6 +3,7 @@ All notable changes. Format: Keep a Changelog; SemVer.
 
 ## [Unreleased] — branch `driftline` (PROPOSED)
 ### Added
+- 2026-11-04: CurtainCall blueprint: Steve's answers Q58–Q79 (t19u–t21u) LOCKED in `07-DECISIONS`, ANSWERED in `06`; `05-STAGES` Stage 1 = Attendance + Costumes + Props + Notes by 2026-12-20.
 - 2026-11-03: CurtainCall `docs/blueprint/07-DECISIONS.md`: Steve's LOCKED picks (Q43–Q47 a, Q51 a, Q52 translucent glance, Q53 sticky collapsible role headers, Q54 a + rail grab handle, Q55 try, Q56 a, tablet redo, backup child, name CurtainCall, all features in).
 - CurtainCall Stage 0 blueprint (branch `curtaincall-blueprint`, PROPOSED): `docs/blueprint/00`–`06` — overview, data model (contract v2, additive to v1), sheet schema v2 + sync, navigation, UI principles (locked picks + Kiwi's PROPOSED Tip/IndexRail specs; Q58 Tip accent, Q59 violet clash), stages, open questions Q58–Q79.
 - Vendored Driftline Kit v0.3.0 in `src/driftline/` (tokens + react); React 19.1.0, framer-motion 12.43.0, @testing-library/react 16.3.0. Kit tests + contrast run green in the app (55 tests).
