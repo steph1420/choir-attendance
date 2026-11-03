@@ -1,6 +1,8 @@
 # Changelog
 All notable changes. Format: Keep a Changelog; SemVer.
 
+## [stage1a] 2026-11-04 — CurtainCall shell (dock + desktop rail), first-run template picker (U-01), quick notes tied to screen + timestamped + queued (offline mode), Excused violet. Costumes/Props/Notes placeholders.
+
 ## [Unreleased] — branch `driftline` (PROPOSED)
 ### Added
 - 2026-11-04: CurtainCall blueprint: Steve's answers Q58–Q79 (t19u–t21u) LOCKED in `07-DECISIONS`, ANSWERED in `06`; `05-STAGES` Stage 1 = Attendance + Costumes + Props + Notes by 2026-12-20.

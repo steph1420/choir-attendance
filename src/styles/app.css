@@ -1,5 +1,5 @@
 /* Components read tokens only. A-02 mark colours (PROPOSED, owner-approved via mockups): */
-:root{--ca-present:var(--lucid-color-transport-play);--ca-present-glow:var(--lucid-color-transport-play-glow);--ca-late:var(--lucid-color-warning);--ca-late-t:var(--lucid-color-warning-text);--ca-exc:var(--lucid-swatch-blue);--ca-exc-t:var(--lucid-swatch-blue-lt);--ca-absent-border:var(--lucid-color-text-muted)}
+:root{--ca-present:var(--lucid-color-transport-play);--ca-present-glow:var(--lucid-color-transport-play-glow);--ca-late:var(--lucid-color-warning);--ca-late-t:var(--lucid-color-warning-text);--ca-exc:var(--lucid-swatch-violet);--ca-exc-t:var(--lucid-swatch-violet-lt);--ca-absent-border:var(--lucid-color-text-muted)}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body,#root{height:100%}
 body{background:var(--lucid-color-bg);color:var(--lucid-color-text-primary);font-family:var(--lucid-font-sans);font-size:var(--lucid-size-body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}

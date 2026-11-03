@@ -5,12 +5,18 @@ import { CONFIG } from './config'
 import { sampleChildren, sampleSession } from './data/sample'
 import { Store } from './data/store'
 import { AppsScriptSync, FakeSync } from './data/sync'
-import { MarkScreen } from './ui/MarkScreen'
+import './cc/cc.css'
+import { useState } from 'react'
+import { AppShell, type Tab } from './cc/AppShell'
+import { QuickNotes } from './cc/quicknotes'
+import { TemplatePicker } from './cc/TemplatePicker'
+import { loadEvent, saveEvent, makeEvent, KEY } from './cc/templates'
 const url = localStorage.getItem('choir-attendance/endpoint')
 const adapter = url ? new AppsScriptSync(url) : new FakeSync()
 const params = new URLSearchParams(location.search)
 if (params.has('offline') && adapter instanceof FakeSync) adapter.isOnline = false
-if (params.has('reset')) localStorage.removeItem(CONFIG.storageKey)
+if (params.has('reset')) { localStorage.removeItem(CONFIG.storageKey); localStorage.removeItem(KEY) }
+if (params.has('demo') && !loadEvent(localStorage)) saveEvent(localStorage, makeEvent('choir', 'Annual Day'))
 const store = new Store(localStorage, adapter, () => ({ children: sampleChildren(), sessions: [sampleSession()] }))
 if (params.has('demo') && !Object.keys(store.state.sessions[0].entries).length) {
   // Placeholder demo marks for screenshots only.
@@ -24,4 +30,11 @@ if (params.has('demo') && !Object.keys(store.state.sessions[0].entries).length) 
 }
 setInterval(() => void store.flush(), CONFIG.syncRetryMs)
 window.addEventListener('online', () => void store.flush())
-createRoot(document.getElementById('root')!).render(<MarkScreen store={store} sessionId={store.state.sessions[0].id} />)
+const qn = new QuickNotes(localStorage, adapter) // offline-queue mode until Apps Script is deployed
+setInterval(() => void qn.flush(), CONFIG.syncRetryMs)
+function Root() {
+  const [ev, setEv] = useState(loadEvent(localStorage))
+  if (!ev) return <TemplatePicker onDone={e => { saveEvent(localStorage, e); setEv(e) }} />
+  return <AppShell store={store} qn={qn} ev={ev} initialTab={(params.get('tab') as Tab) ?? 'today'} initialNote={params.has('note')} />
+}
+createRoot(document.getElementById('root')!).render(<Root />)
