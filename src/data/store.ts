@@ -1,5 +1,6 @@
 // CODE-1/2: the single data layer. Screens send intents here; local storage + queue are owned here.
 import { CONFIG } from '../config'
+import { readJSON, isObj } from './safe'
 import type { Child, Op, QueuedOp, Saved, Session } from './model'
 import type { SyncAdapter, SyncState } from './sync'
 export interface KV { getItem(k: string): string | null; setItem(k: string, v: string): void }
@@ -18,9 +19,8 @@ export function applyOp(s: Session, op: Op): Session {
 export class Store {
   state: Saved; private subs = new Set<() => void>(); sync: SyncState = { kind: 'synced' }; private flushing = false
   constructor(private kv: KV, private adapter: SyncAdapter, seed: () => { children: Child[]; sessions: Session[] }) {
-    const raw = kv.getItem(CONFIG.storageKey)
-    let loaded: Saved | null = null
-    if (raw) { const p = JSON.parse(raw) as Saved; if (p.v !== CONFIG.schemaVersion) throw new Error(`Stored data version ${p.v} ≠ ${CONFIG.schemaVersion}`); loaded = p }
+    const loaded = readJSON<Saved>(kv, CONFIG.storageKey, p => isObj(p) && p.v === CONFIG.schemaVersion && Array.isArray(p.children) && Array.isArray(p.sessions) && Array.isArray(p.queue)
+      && p.sessions.every((s: any) => isObj(s) && typeof s.id === 'string' && isObj(s.entries)) && p.children.every((c: any) => isObj(c) && c.id != null))
     this.state = loaded ?? { v: CONFIG.schemaVersion, ...seed(), queue: [], seq: 0, device: Math.random().toString(36).slice(2, 8) }
     this.recalc()
   }

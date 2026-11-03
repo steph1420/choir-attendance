@@ -2,13 +2,14 @@
 import type { KV } from '../data/store'
 import type { SyncAdapter } from '../data/sync'
 import type { QueuedOp } from '../data/model'
+import { readJSON, isQueueState } from '../data/safe'
 export interface Remote<T> { id: string; rev: number; at: string; deleted: boolean; item: T | null }
 interface Saved<T> { v: 1; meta?: Record<string, { rev: number; at: string }>; items: T[]; queue: QueuedOp[]; seq: number; device: string }
 export class Collection<T extends { id: string }> {
   state: Saved<T>; scope?: string; private subs = new Set<() => void>()
   constructor(private kind: string, private kv: KV, private adapter: SyncAdapter, seed: () => T[] = () => [], private now = () => new Date()) {
-    const r = kv.getItem(this.key)
-    this.state = r ? JSON.parse(r) : { v: 1, items: seed(), queue: [], seq: 0, device: Math.random().toString(36).slice(2, 8) }
+    const r = readJSON<Saved<T>>(kv, this.key, x => isQueueState(x, 'items'))
+    this.state = r ? { ...r, items: r.items.filter(i => i && typeof i === 'object' && (i as { id?: unknown }).id != null) } : { v: 1, items: seed(), queue: [], seq: 0, device: Math.random().toString(36).slice(2, 8) }
   }
   get key() { return `curtaincall/${this.kind}/v1` }
   get items() { const s = this.scope; return s ? this.state.items.filter(i => (i as { eventId?: string }).eventId === s) : this.state.items }

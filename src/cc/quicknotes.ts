@@ -2,14 +2,15 @@
 import type { KV } from '../data/store'
 import type { SyncAdapter } from '../data/sync'
 import type { QueuedOp } from '../data/model'
+import { readJSON, isQueueState } from '../data/safe'
 export interface QuickNote { id: string; screen: string; text: string; at: string; by?: string; eventId?: string }
 interface Saved { v: 1; notes: QuickNote[]; queue: QueuedOp[]; seq: number; device: string }
 export const QN_KEY = 'curtaincall/quicknotes/v1'
 export class QuickNotes {
   state: Saved; scope?: string; private subs = new Set<() => void>()
   constructor(private kv: KV, private adapter: SyncAdapter, private now = () => new Date()) {
-    const r = kv.getItem(QN_KEY)
-    this.state = r ? JSON.parse(r) : { v: 1, notes: [], queue: [], seq: 0, device: Math.random().toString(36).slice(2, 8) }
+    const r = readJSON<Saved>(kv, QN_KEY, x => isQueueState(x, 'notes'))
+    this.state = r ? r : { v: 1, notes: [], queue: [], seq: 0, device: Math.random().toString(36).slice(2, 8) }
   }
   subscribe(f: () => void) { this.subs.add(f); return () => { this.subs.delete(f) } }
   private emit() { this.kv.setItem(QN_KEY, JSON.stringify(this.state)); this.subs.forEach(f => f()) }

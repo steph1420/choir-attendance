@@ -1,3 +1,4 @@
+import { readJSON, isObj } from '../data/safe'
 // 08-shared-app-patterns: apps check named capabilities, never role names. Roles map to capabilities.
 export type Cap = 'view.careFlags' | 'edit.careFlags' | 'admin.permissions'
 export type Role = 'teacher' | 'coordinator' | 'admin'
@@ -16,5 +17,6 @@ export function setCap(m: CapMap, actor: Role, target: Role, c: Cap, on: boolean
 export const TEACHERS = ['Teacher-S', 'Teacher-A', 'Teacher-B', 'Coordinator-C'] // codenames; login-based later
 export interface Prefs { teacher: string; role: Role; caps: CapMap }
 export const PREFS_KEY = 'curtaincall/prefs/v1'
-export const loadPrefs = (kv: { getItem(k: string): string | null }): Prefs => ({ teacher: 'Teacher-S', role: 'coordinator', caps: DEFAULT_CAPS, ...JSON.parse(kv.getItem(PREFS_KEY) ?? '{}') })
+export const loadPrefs = (kv: { getItem(k: string): string | null }): Prefs => { const p = readJSON<Partial<Prefs>>(kv, PREFS_KEY, isObj) ?? {}
+  return { teacher: typeof p.teacher === 'string' ? p.teacher : 'Teacher-S', role: typeof p.role === 'string' ? p.role : 'coordinator', caps: isObj(p.caps) ? { ...DEFAULT_CAPS, ...p.caps } as Prefs['caps'] : DEFAULT_CAPS } as Prefs }
 export interface CareFlag { id: string; note: string } // id = memberId

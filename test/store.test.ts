@@ -26,11 +26,11 @@ test('offline queues, then flushes and dedupes', async () => {
   f.isOnline = true; f.failNext = 1; await s.flush(); expect(s.state.queue.length).toBe(2) // lost → stays queued
   await s.flush(); expect(s.state.queue.length).toBe(0); expect(f.received.length).toBe(2); expect(s.sync.kind).toBe('synced')
 })
-test('persists and reloads; rejects wrong version', () => {
+test('persists and reloads; wrong version falls back safely (backup kept)', () => {
   const kv = mem(); const s = new Store(kv, new FakeSync(), seed)
   s.dispatch({ t: 'takenBy', sessionId: sid, name: 'Teacher-S' })
   expect(new Store(kv, new FakeSync(), seed).session(sid).takenBy).toBe('Teacher-S')
-  kv.setItem('choir-attendance/v1', JSON.stringify({ v: 99 })); expect(() => new Store(kv, new FakeSync(), seed)).toThrow(/version/)
+  kv.setItem('choir-attendance/v1', JSON.stringify({ v: 99 })); expect(new Store(kv, new FakeSync(), seed).session(sid).takenBy).toBeUndefined(); expect(kv.getItem('choir-attendance/v1.bad')).toContain('99')
 })
 
 test('ops queued during a push are drained', async () => {
