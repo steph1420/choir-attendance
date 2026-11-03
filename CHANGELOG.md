@@ -1,6 +1,8 @@
 # Changelog
 All notable changes. Format: Keep a Changelog; SemVer.
 
+## [stage1b] 2026-11-04 — Today header (summary cards, dismissable tip, template labels); real Costumes and Props (add/edit/status/filters, size tally, WhatsApp reminder copy); full Notes (text + checklist cards, tags, search, pin, quick notes merged). All saved locally and queued.
+
 ## [stage1a] 2026-11-04 — CurtainCall shell (dock + desktop rail), first-run template picker (U-01), quick notes tied to screen + timestamped + queued (offline mode), Excused violet. Costumes/Props/Notes placeholders.
 
 ## [Unreleased] — branch `driftline` (PROPOSED)

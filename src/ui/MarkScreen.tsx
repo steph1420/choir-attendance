@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { CONFIG } from '../config'
 import { countMarks, groupChildren } from '../data/derive'
 import type { GroupBy } from '../data/model'
@@ -7,7 +7,8 @@ import { useStore } from '../data/useStore'
 import { AzStrip } from '../az/AzStrip'
 import { ChildRow } from './ChildRow'
 import { RemarkSheet } from './RemarkSheet'
-export function MarkScreen({ store, sessionId }: { store: Store; sessionId: string }) {
+export interface MarkLabels { group: string; part: string; title?: string }
+export function MarkScreen({ store, sessionId, header, labels }: { store: Store; sessionId: string; header?: (c: ReturnType<typeof countMarks>) => ReactNode; labels?: MarkLabels }) {
   useStore(store)
   const s = store.session(sessionId)
   const kids = store.state.children
@@ -24,23 +25,23 @@ export function MarkScreen({ store, sessionId }: { store: Store; sessionId: stri
   const noteChild = kids.find(k => k.id === note)
   return (
     <div className="shell">
-      <header className="topbar">
+      {header ? header(c) : <header className="topbar">
         <div className="logo"><span className="wm">CHOIR</span><span className="sub">ATTENDANCE</span></div>
         <div className="sync" aria-live="polite"><i className={`dot ${sync.kind}`} />{sync.kind === 'synced' ? 'Synced' : sync.kind === 'syncing' ? `Syncing ${sync.n}` : `Offline · ${sync.n} queued`}</div>
-      </header>
+      </header>}
       <div className="body">
         <main className="page">
-          <div className="head">
+          {!header && <div className="head">
             <div><p className="lbl">{s.slot} · {s.venue} · {s.start}</p><h1 className="pt">Mark</h1></div>
             <div className="count"><span className="disp">{c.present}</span><span className="of"> / {c.total}</span><p className="cap">present</p></div>
-          </div>
+          </div>}
           <label className="field taken"><span className="cap">Taken by</span>
             <input value={s.takenBy ?? ''} placeholder="Teacher name (optional)" onChange={e => store.dispatch({ t: 'takenBy', sessionId, name: e.target.value })} /></label>
           <div className="actions">
             <button className="btno" onClick={() => { store.dispatch({ t: 'allPresent', sessionId, childIds: kids.map(k => k.id) }); say('Unmarked children set to Present') }}>✓ All present</button>
           </div>
           <div className="seg" role="tablist">
-            {(['section', 'role', 'az'] as GroupBy[]).map(g => <button key={g} role="tab" aria-selected={by === g} className={by === g ? 'on' : ''} onClick={() => setBy(g)}>{g === 'section' ? 'Section' : g === 'role' ? 'Role' : 'A–Z'}</button>)}
+            {(['section', 'role', 'az'] as GroupBy[]).map(g => <button key={g} role="tab" aria-selected={by === g} className={by === g ? 'on' : ''} onClick={() => setBy(g)}>{g === 'section' ? (labels?.group ?? 'Section') : g === 'role' ? (labels?.part ?? 'Role') : 'A–Z'}</button>)}
           </div>
           <div className={`list ${by === 'az' ? (azLeft ? 'az-pad-left' : 'az-pad') : ''}`} ref={listRef}>
             {groups.map(g => (
