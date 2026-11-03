@@ -70,3 +70,34 @@ select.cc-in{appearance:auto}
 @media (min-width:900px){.cc-page>.cc-card2{max-width:760px}}
 select.cc-in{color:var(--lucid-color-text-primary);color-scheme:dark}.cc-card2{overflow-x:auto}.cc-perm th{font-size:10px}
 .cc-sync{display:inline-flex;align-items:center;gap:4px}.cc-logo .cc-sync{margin-top:6px}
+/* Today v2 */
+.cc-today{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;container-type:inline-size;padding-bottom:96px;--bar-h:120px}
+.cc-bar{border-bottom:1px solid var(--lucid-color-divider);padding:6px 12px 8px;display:flex;flex-direction:column;gap:6px}
+.cc-bar1{display:flex;align-items:center;gap:6px;min-height:44px}
+.cc-title{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:44px;justify-content:center}
+.cc-title b{font-size:20px;font-weight:600;color:var(--lucid-color-text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.cc-title small{font-size:12px;color:var(--lucid-color-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;transition:opacity .15s}
+.cc-syncdot .cc-sync{font-size:0}.cc-syncdot .dot{width:9px;height:9px}
+.cc-bar .cc-ib{width:40px;height:40px;flex:none}
+.cc-bar2{display:flex;align-items:center;gap:8px}
+.cc-counts{flex:1;min-width:0;display:flex;gap:10px;align-items:center;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden}
+.cc-counts .k-u{font-weight:400;color:var(--lucid-color-text-muted);font-size:12px}
+.cc-pill{flex:none;height:34px;padding:0 14px;border-radius:99px;border:1px solid var(--ca-present);color:var(--ca-present);font-size:13px;font-weight:600}.cc-pill:disabled{opacity:.35}
+.cc-seg{display:flex;height:34px;border-radius:10px;background:var(--lucid-color-fill-1);border:1px solid var(--lucid-color-divider);padding:2px;gap:2px}
+.cc-seg button{flex:1;border-radius:8px;font-size:13px;color:var(--lucid-color-text-tertiary)}.cc-seg button.on{background:var(--lucid-color-fill-selected);color:var(--lucid-color-text-strong)}
+.cc-tip-today{margin:0}
+.cc-ghead{position:sticky;top:0;z-index:3;display:flex;gap:8px;padding:8px 16px 6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--lucid-color-text-secondary);background:var(--lucid-color-bg);border-bottom:1px solid var(--lucid-color-divider)}
+.cc-ghead span{color:var(--lucid-color-text-muted)}
+.cc-today .row{margin:0 12px}
+@container (min-width:760px){.cc-today .rows{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}}
+@media (min-width:900px){.cc-bar{padding:10px 24px}.cc-today .row{margin:0 24px}.cc-ghead{padding:8px 24px}}
+/* permission cards on phone */
+.cc-permcards{display:none;flex-direction:column;gap:8px}.cc-permcards div{border:1px solid var(--lucid-color-divider);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.cc-permcards label{display:flex;justify-content:space-between;align-items:center;min-height:40px;font-size:14px}
+@media (max-width:599px){.cc-perm{display:none}.cc-permcards{display:flex}}
+/* polish 1: toasts sit above the dock and sheets */
+.cc-app ~ .toast,.cc-app .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:60;max-width:calc(100vw - 32px);white-space:nowrap}
+@media (min-width:900px){.cc-app .toast{bottom:24px}}
+.cc-page>*{flex-shrink:0}
+/* polish 2: on phone, toasts float at the top so they never cover sheets or the dock */
+@media (max-width:899px){.cc-app .toast,.cc-app ~ .toast{bottom:auto;top:calc(12px + env(safe-area-inset-top,0px))}}

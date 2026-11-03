@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import type { Store } from '../data/store'
 import { sampleSession } from '../data/sample'
-import { MarkScreen } from '../ui/MarkScreen'
+import { TodayScreen } from './TodayScreen'
 import type { QuickNotes } from './quicknotes'
 import { QuickNoteSheet } from './QuickNoteSheet'
 import { TEMPLATES, type EventSetup } from './templates'
@@ -21,7 +21,7 @@ export type Tab = 'today' | 'show' | 'members' | 'notes' | 'reports' | 'settings
 const TABS: [Tab, string, string][] = [['today', '☀', 'Today'], ['show', '🎭', 'Show'], ['members', '👥', 'Members'], ['notes', '📝', 'Notes'], ['reports', '📊', 'Reports']]
 export function AppShell({ store, qn, ev, cols, initialTab = 'today', initialNote = false, initialShow = 'costumes', ctx }: { ctx: Ctx; store: Store; qn: QuickNotes; ev: EventSetup; cols: Cols; initialTab?: Tab; initialNote?: boolean; initialShow?: 'costumes' | 'props' }) {
   useSyncExternalStore(qn.subscribe.bind(qn), () => qn.state)
-  const [show, setShow] = useState(initialShow); const [tip, setTip] = useState(() => localStorage.getItem('curtaincall/tip-today') !== 'off')
+  const [show, setShow] = useState(initialShow)
   const s0 = store.sessionFor(ev.id ?? 'e1', sampleSession); const tname = TEMPLATES.find(t => t.id === ev.template)?.name
   const sync = store.sync
   const ps = useSyncExternalStore(ctx.puller.subscribe, ctx.puller.snap); const stxt = statusText(sync, ps); const dotk = sync.kind === 'offline' || ps.kind === 'error' ? 'offline' : sync.kind === 'syncing' || ps.kind === 'pulling' ? 'syncing' : 'synced'
@@ -40,16 +40,13 @@ export function AppShell({ store, qn, ev, cols, initialTab = 'today', initialNot
         <button className={`gear ${tab === 'settings' ? 'on' : ''}`} onClick={() => setTab('settings')}><b>⚙</b>Settings</button>
       </nav>
       <div className="cc-main">
-        {tab === 'today' && <MarkScreen store={store} sessionId={s0.id} labels={{ group: L.group, part: L.part }} header={c => <div className="cc-page cc-todayhead">
-          <header className="cc-head"><div style={{ flex: 1 }}><h1>{L.session} · {s0.start}</h1><p className="cc-sub">{ev.name} · {tname} · <span className="cc-sync" role="status"><i className={`dot ${dotk}`} /> {stxt}</span></p></div>
-            <UR /><button className="cc-ib" aria-label="Settings" onClick={() => setTab('settings')}>⚙</button></header>
-          <div className="cc-kpi"><div><b className="k-p">{c.present}</b><span>Present</span></div><div><b className="k-a">{c.A}</b><span>Absent</span></div><div><b className="k-l">{c.L}</b><span>Late</span></div><div><b className="k-e">{c.E}</b><span>Excused</span></div></div>
-          {tip && <div className="cc-tip" role="note">✨<span>Tap to mark · tap a name for a remark</span><button aria-label="Dismiss tip" onClick={() => { localStorage.setItem('curtaincall/tip-today', 'off'); setTip(false) }}>×</button></div>}
-        </div>} />}
+        {tab === 'today' && <TodayScreen store={store} session={s0} title={`${L.session} · ${s0.start}`} sub={`${ev.name} · ${tname}`} teacher={ctx.prefs.teacher} onSay={say}
+          groupLabel={L.group} partLabel={L.part} sync={<span className="cc-sync" role="status" title={stxt} aria-label={stxt}><i className={`dot ${dotk}`} /> {stxt}</span>}
+          actions={<><UR /><button className="cc-ib" aria-label="Settings" onClick={() => setTab('settings')}>⚙</button></>} />}
         {tab === 'show' && <div className="cc-show"><div className="cc-chips cc-subtabs">{(['costumes', 'props'] as const).map(k => <button key={k} className={show === k ? 'on' : ''} onClick={() => setShow(k)}>{k === 'costumes' ? '👗 Costumes' : '🧺 Props'}</button>)}<span style={{ flex: 1 }} /><UR /></div>
           {show === 'costumes' ? <CostumesScreen col={cols.costumes} ev={ev.name} members={store.state.children} /> : <PropsScreen col={cols.props} ev={ev.name} />}</div>}
-        {tab === 'members' && <MembersScreen kids={store.state.children} care={cols.care} costumes={cols.costumes} prefs={ctx.prefs} labels={L} />}
-        {tab === 'notes' && <NotesScreen col={cols.notes} quick={qn.notes} />}
+        {tab === 'members' && <MembersScreen ur={<UR />} kids={store.state.children} care={cols.care} costumes={cols.costumes} prefs={ctx.prefs} labels={L} />}
+        {tab === 'notes' && <NotesScreen ur={<UR />} col={cols.notes} quick={qn.notes} />}
         {tab === 'reports' && ph('Reports', 'Coming in a later stage.')}
         {tab === 'settings' && <SettingsScreen endpoint={ctx.endpoint} setEndpoint={ctx.setEndpoint} evs={ctx.evs} setEvs={ctx.setEvs} prefs={ctx.prefs} setPrefs={ctx.setPrefs} />}
       </div>

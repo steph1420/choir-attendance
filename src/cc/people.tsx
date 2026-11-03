@@ -1,4 +1,4 @@
-import { useState, useSyncExternalStore } from 'react'
+import { useState, useSyncExternalStore, type ReactNode } from 'react'
 import type { Child } from '../data/model'
 import type { Collection } from './collection'
 import type { Costume } from './kinds'
@@ -6,13 +6,13 @@ import { CAPS, ROLES, TEACHERS, can, setCap, type CareFlag, type Prefs } from '.
 import { TEMPLATES, activeEvent, makeEvent, type Events, type Labels, type TemplateId } from './templates'
 import { Head } from './screens'
 const use = <T extends { id: string }>(c: Collection<T>) => { useSyncExternalStore(c.subscribe, c.snap); return c.items }
-export function MembersScreen({ kids, care, costumes, prefs, labels }: { kids: Child[]; care: Collection<CareFlag>; costumes: Collection<Costume>; prefs: Prefs; labels: Labels }) {
+export function MembersScreen({ kids, care, costumes, prefs, labels, ur }: { ur?: ReactNode; kids: Child[]; care: Collection<CareFlag>; costumes: Collection<Costume>; prefs: Prefs; labels: Labels }) {
   const flags = use(care), cos = use(costumes); const [q, setQ] = useState(''); const [open, setOpen] = useState<string | null>(null); const [draft, setDraft] = useState('')
   const view = can(prefs.caps, prefs.role, 'view.careFlags'), edit = can(prefs.caps, prefs.role, 'edit.careFlags')
   const list = kids.filter(k => k.name.toLowerCase().includes(q.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name))
   const sel = kids.find(k => k.id === open); const flag = flags.find(f => f.id === open)
   return <div className="cc-page">
-    <Head title={labels.members} sub={`${kids.length} ${labels.members.toLowerCase()} · ⚕ = care flag${view ? '' : ' (details hidden)'}`} />
+    <Head title={labels.members} sub={`${kids.length} ${labels.members.toLowerCase()} · ⚕ = care flag${view ? '' : ' (details hidden)'}`} right={ur} />
     <input className="cc-in cc-search" aria-label="Search members" placeholder="🔍 Search" value={q} onChange={e => setQ(e.target.value)} />
     <div className="cc-list">{list.map(k => { const f = flags.find(x => x.id === k.id), c = cos.find(x => x.memberId === k.id)
       return <button key={k.id} className="cc-item" onClick={() => { setOpen(k.id); setDraft(f?.note ?? '') }}>
@@ -51,6 +51,8 @@ export function SettingsScreen({ evs, setEvs, prefs, setPrefs, endpoint, setEndp
       {!admin && <p className="cc-sub">Only coordinators and admins can change this.</p>}
       <table className="cc-perm"><thead><tr><th />{CAPS.map(c => <th key={c}>{c}</th>)}</tr></thead><tbody>{ROLES.map(r => <tr key={r}><td>{r}</td>{CAPS.map(c => <td key={c}>
         <input type="checkbox" aria-label={`${r} ${c}`} disabled={!admin} checked={can(prefs.caps, r, c)} onChange={e => { try { setPrefs({ ...prefs, caps: setCap(prefs.caps, prefs.role, r, c, e.target.checked) }) } catch (x) { setErr(String(x)) } }} /></td>)}</tr>)}</tbody></table>
+      <div className="cc-permcards">{ROLES.map(r => <div key={r}><b>{r}</b>{CAPS.map(c => <label key={c}><span>{c === 'view.careFlags' ? 'See care details' : c === 'edit.careFlags' ? 'Edit care flags' : 'Change permissions'}</span>
+        <input type="checkbox" aria-label={`${r} ${c} (card)`} disabled={!admin} checked={can(prefs.caps, r, c)} onChange={e => { try { setPrefs({ ...prefs, caps: setCap(prefs.caps, prefs.role, r, c, e.target.checked) }) } catch (x) { setErr(String(x)) } }} /></label>)}</div>)}</div>
       {err && <p className="cc-sub">{err}</p>}</section>
   </div>
 }

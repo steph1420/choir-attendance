@@ -23,5 +23,5 @@ export type Op =
   | { t: 'allPresent'; sessionId: string; childIds: string[] }
   | { t: 'takenBy'; sessionId: string; name: string }
 export interface QueuedOp { v: 1; seq: number; at: string; device: string; op: Op }
-export interface Saved { v: number; children: Child[]; sessions: Session[]; queue: QueuedOp[]; seq: number; device: string }
+export interface Saved { attAt?: Record<string, string>; v: number; children: Child[]; sessions: Session[]; queue: QueuedOp[]; seq: number; device: string }
 export type GroupBy = 'section' | 'role' | 'az'

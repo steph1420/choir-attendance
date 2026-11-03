@@ -56,14 +56,14 @@ export function PropsScreen({ col, ev }: { col: Collection<Prop>; ev: string }) 
     </Sheet>}
   </div>
 }
-export function NotesScreen({ col, quick }: { col: Collection<Note>; quick: { id: string; screen: string; text: string; at: string }[] }) {
+export function NotesScreen({ col, quick, ur }: { ur?: ReactNode; col: Collection<Note>; quick: { id: string; screen: string; text: string; at: string }[] }) {
   const all = use(col); const [q, setQ] = useState(''); const [tag, setTag] = useState('All'); const [ed, setEd] = useState<Note | null>(null)
   const tags = ['All', 'Quick notes', ...new Set(all.flatMap(n => n.tags).map(t => '#' + t))]
   const merged: Note[] = [...all, ...quick.map(n => ({ id: 'q-' + n.id, title: n.screen, text: n.text, tags: ['quick'], at: n.at, screen: n.screen }))]
   const list = searchNotes(merged, q, tag === 'All' ? undefined : tag === 'Quick notes' ? 'quick' : tag.slice(1))
   const blank = (cl: boolean): Note => ({ id: col.newId(), title: '', text: '', items: cl ? [{ t: '', done: false }] : undefined, tags: [], at: new Date().toISOString() })
   return <div className="cc-page">
-    <Head title="Notes" sub={`${merged.length} notes · pinned first`} right={<><button className="cc-btn" onClick={() => setEd(blank(false))}>+ Note</button><button className="cc-btn ghost" aria-label="New checklist" onClick={() => setEd(blank(true))}>☑</button></>} />
+    <Head title="Notes" sub={`${merged.length} notes · pinned first`} right={<>{ur}<button className="cc-btn" onClick={() => setEd(blank(false))}>+ Note</button><button className="cc-btn ghost" aria-label="New checklist" onClick={() => setEd(blank(true))}>☑</button></>} />
     <input className="cc-in cc-search" aria-label="Search notes" placeholder="🔍 Search notes" value={q} onChange={e => setQ(e.target.value)} />
     <Chips keys={tags} on={tag} set={setTag} />
     <div className="cc-masonry">{list.map(n => <button key={n.id} className={`cc-note ${n.pinned ? 'pin' : ''}`} onClick={() => !n.id.startsWith('q-') && setEd(n)}>

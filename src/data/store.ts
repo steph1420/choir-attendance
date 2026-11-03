@@ -38,12 +38,36 @@ export class Store {
     const s = { ...make(), eventId }; s.id = `${eventId}/${s.id}`
     this.state = { ...this.state, sessions: [...this.state.sessions, s] }; this.emit(); return s
   }
+  /** Pull merge for attendance rows (v1 layout: Session, Child, Mark, Reason, Left early, Remark, Stars, Device, Seq, At).
+   * Last write wins by At; a child with local changes still queued keeps the local value. Sessions unknown here are created when their Event ID is known. */
+  mergeAttendance(rows: unknown[][], sessions: unknown[][] = []) {
+    const pend = new Set<string>(); for (const q of this.state.queue) { const o = q.op as { sessionId?: string; childId?: string; childIds?: string[] }; if (o.childId) pend.add(`${o.sessionId}|${o.childId}`); o.childIds?.forEach(id => pend.add(`${o.sessionId}|${id}`)) }
+    const at = { ...(this.state.attAt ?? {}) }; let ss = this.state.sessions, n = 0
+    const evOf = new Map(sessions.map(r => [String(r[0]), String(r[9] ?? '')]))
+    for (const r of rows) {
+      const [sid, cid, mark, reason, left, remark, stars, , , when] = r.map(x => x === '' ? undefined : x) as (string | number | undefined)[]
+      const key = `${sid}|${cid}`; if (!sid || !cid || pend.has(key) || (at[key] && String(when ?? '') <= at[key])) continue
+      let s = ss.find(x => x.id === sid)
+      if (!s) { const eid = evOf.get(String(sid)); if (!eid) continue; const date = String(sid).split('/').pop()!.slice(0, 10)
+        s = { id: String(sid), eventId: eid, date, slot: '', venue: '', start: '', end: '', status: 'conducted', entries: {} }; ss = [...ss, s] }
+      const e = { mark: (mark || undefined) as Session['entries'][string]['mark'], reason: reason ? String(reason) : undefined, leftEarly: left === 'Y' || undefined, remark: remark ? String(remark) : undefined, stars: stars ? Number(stars) : undefined }
+      ss = ss.map(x => x.id === sid ? { ...x, entries: { ...x.entries, [String(cid)]: e } } : x); at[key] = String(when ?? ''); n++
+    }
+    if (n || ss !== this.state.sessions) { this.state = { ...this.state, sessions: ss, attAt: at }; this.emit() } return n
+  }
+  /** Backend Members rows (Child ID, Section, Role, From, To, Note, Name (auto)) replace the local list. Never logged. */
+  setMembers(rows: unknown[][]) {
+    const kids: Child[] = rows.filter(r => r[0]).map(r => ({ id: String(r[0]), section: String(r[1] || '—'), role: String(r[2] || 'Singer'), name: String(r[6] || r[0]) }))
+    if (!kids.length || JSON.stringify(kids) === JSON.stringify(this.state.children)) return 0
+    this.state = { ...this.state, children: kids }; this.emit(); return kids.length
+  }
   session(id: string) { return this.state.sessions.find(s => s.id === id)! }
   dispatch(op: Op) {
     const seq = this.state.seq + 1
     const ev = this.state.sessions.find(s => s.id === op.sessionId)?.eventId
     const q: QueuedOp = { v: 1, seq, at: new Date().toISOString(), device: this.state.device, op: ev ? { ...op, eventId: ev } as unknown as Op : op }
-    this.state = { ...this.state, seq, sessions: this.state.sessions.map(s => s.id === op.sessionId ? applyOp(s, op) : s), queue: [...this.state.queue, q] }
+    const attAt = 'childId' in op ? { ...(this.state.attAt ?? {}), [`${op.sessionId}|${op.childId}`]: q.at } : op.t === 'allPresent' ? { ...(this.state.attAt ?? {}), ...Object.fromEntries(op.childIds.map(id => [`${op.sessionId}|${id}`, q.at])) } : this.state.attAt
+    this.state = { ...this.state, attAt, seq, sessions: this.state.sessions.map(s => s.id === op.sessionId ? applyOp(s, op) : s), queue: [...this.state.queue, q] }
     this.emit(); void this.flush()
   }
   async flush() {

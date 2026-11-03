@@ -1,6 +1,6 @@
 // Pull sync (contract v2): GET ?v=2 on load, on focus, and every ~60 s while online.
 import type { Remote } from './collection'
-export type Kind = 'events' | 'costumes' | 'props' | 'notes' | 'quicknotes' | 'care' | 'permissions'
+export type Kind = 'store' | 'events' | 'costumes' | 'props' | 'notes' | 'quicknotes' | 'care' | 'permissions'
 export interface Mergeable { merge(r: Remote<never>[]): number }
 export type PullStatus = { kind: 'idle' | 'pulling' | 'ok' | 'error' | 'offline' | 'local'; at?: string; error?: string; changed?: number }
 export class Puller {
@@ -21,7 +21,9 @@ export class Puller {
       const r = await this.fetcher(`${this.url}${this.url.includes('?') ? '&' : '?'}v=2${pq}`); const j = await r.json()
       if (this.auth?.check(j)) throw new Error('wrong passcode')
       if (!j.ok) throw new Error(j.error || 'server error'); if (j.v !== 2 || !j.records) throw new Error('backend is not contract v2 yet')
-      let changed = 0; for (const [k, t] of Object.entries(this.targets)) changed += t!.merge(j.records[k] ?? [])
+      let changed = 0; for (const [k, t] of Object.entries(this.targets)) if (k !== 'store') changed += t!.merge(j.records[k] ?? [])
+      if (this.targets.store) { const st = this.targets.store as unknown as { setMembers(r: unknown[][]): number; mergeAttendance(a: unknown[][], s: unknown[][]): number }
+        if (Array.isArray(j.members)) changed += st.setMembers(j.members); if (Array.isArray(j.attendance)) changed += st.mergeAttendance(j.attendance, j.sessions ?? []) }
       this.set({ kind: 'ok', at: this.now().toISOString(), changed })
     } catch (e) { this.set({ ...this.status, kind: 'error', error: String((e as Error).message ?? e) }) } finally { this.busy = false }
   }

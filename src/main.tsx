@@ -28,7 +28,8 @@ const params = new URLSearchParams(location.search)
 if (params.has('offline') && adapter instanceof FakeSync) adapter.isOnline = false
 if (params.has('reset')) { localStorage.removeItem(CONFIG.storageKey); localStorage.removeItem(KEY); localStorage.removeItem(EVENTS_KEY); localStorage.removeItem(PREFS_KEY); for (const k of ['costumes', 'props', 'notes', 'quicknotes', 'care', 'events', 'permissions']) localStorage.removeItem(`curtaincall/${k}/v1`); localStorage.removeItem('curtaincall/tip-today') }
 if (params.has('demo') && !loadEvent(localStorage)) saveEvent(localStorage, makeEvent('choir', 'Annual Day'))
-const store = new Store(localStorage, adapter, () => ({ children: sampleChildren(), sessions: [sampleSession()] }))
+// Connected: the roster comes from the backend Members tab (pulled); sample children only when local.
+const store = new Store(localStorage, adapter, () => ({ children: url ? [] : sampleChildren(), sessions: [sampleSession()] }))
 if (params.has('demo') && !Object.keys(store.state.sessions[0].entries).length) {
   // Placeholder demo marks for screenshots only.
   const sid = store.state.sessions[0].id
@@ -51,10 +52,10 @@ function applyScope(evs: Events | null) {
   store.adoptSessions(id); qn.setScope(id); for (const k of ['costumes', 'props', 'notes'] as const) cols[k].setScope(id)
 }
 applyScope(loadEvents(localStorage))
-const puller = new Puller(url, { events: sync2.events, costumes: cols.costumes, props: cols.props, notes: cols.notes, quicknotes: qn, care: cols.care, permissions: sync2.permissions } as never, undefined, undefined, undefined, auth as never)
+const puller = new Puller(url, { events: sync2.events, costumes: cols.costumes, props: cols.props, notes: cols.notes, quicknotes: qn, care: cols.care, permissions: sync2.permissions, store } as never, undefined, undefined, undefined, auth as never)
 puller.start(60000)
 const setEndpoint = (u: string) => { if (u) localStorage.setItem('choir-attendance/endpoint', u); else localStorage.removeItem('choir-attendance/endpoint'); location.reload() }
-const hist = new History(); trackStore(store, hist); trackCollection(cols.costumes, hist, 'costume'); trackCollection(cols.props, hist, 'prop')
+const hist = new History(); trackStore(store, hist); trackCollection(cols.costumes, hist, 'costume'); trackCollection(cols.props, hist, 'prop'); trackCollection(cols.notes, hist, 'note'); trackCollection(cols.care, hist, 'care flag')
 setInterval(() => { void qn.flush(); [...Object.values(cols), ...Object.values(sync2)].forEach(c => void c.flush()) }, CONFIG.syncRetryMs)
 function Root() {
   const [evs, setEvsS] = useState<Events | null>(() => loadEvents(localStorage))
