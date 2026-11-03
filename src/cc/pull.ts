@@ -5,7 +5,7 @@ export interface Mergeable { merge(r: Remote<never>[]): number }
 export type PullStatus = { kind: 'idle' | 'pulling' | 'ok' | 'error' | 'offline' | 'local'; at?: string; error?: string; changed?: number }
 export class Puller {
   status: PullStatus; private subs = new Set<() => void>(); private busy = false
-  constructor(private url: string | null, private targets: Partial<Record<Kind, Mergeable>>, private fetcher: typeof fetch = (...a) => fetch(...a), private online = () => typeof navigator === 'undefined' || navigator.onLine, private now = () => new Date()) {
+  constructor(private url: string | null, private targets: Partial<Record<Kind, Mergeable>>, private fetcher: typeof fetch = (...a) => fetch(...a), private online = () => typeof navigator === 'undefined' || navigator.onLine, private now = () => new Date(), private auth?: { pass: string | null; check(j: unknown): boolean }) {
     this.status = { kind: url ? 'idle' : 'local' }
   }
   subscribe = (f: () => void) => { this.subs.add(f); return () => { this.subs.delete(f) } }
@@ -16,7 +16,10 @@ export class Puller {
     if (!this.online()) return this.set({ ...this.status, kind: 'offline' })
     this.busy = true; this.set({ ...this.status, kind: 'pulling' })
     try {
-      const r = await this.fetcher(`${this.url}${this.url.includes('?') ? '&' : '?'}v=2`); const j = await r.json()
+      if (this.auth && !this.auth.pass) { this.busy = false; return this.set({ ...this.status, kind: 'error', error: 'passcode needed' }) }
+      const pq = this.auth?.pass ? `&pass=${encodeURIComponent(this.auth.pass)}` : ''
+      const r = await this.fetcher(`${this.url}${this.url.includes('?') ? '&' : '?'}v=2${pq}`); const j = await r.json()
+      if (this.auth?.check(j)) throw new Error('wrong passcode')
       if (!j.ok) throw new Error(j.error || 'server error'); if (j.v !== 2 || !j.records) throw new Error('backend is not contract v2 yet')
       let changed = 0; for (const [k, t] of Object.entries(this.targets)) changed += t!.merge(j.records[k] ?? [])
       this.set({ kind: 'ok', at: this.now().toISOString(), changed })

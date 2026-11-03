@@ -40,3 +40,27 @@ Share this file with nobody else (or Viewer only with people you fully trust): h
 19. Paste the URL to Choir in chat (or paste it yourself: app ⚙ Settings → Backend (sync) → Save & reconnect).
 
 If anything looks different or shows an error, send a screenshot. Don't click **Delete** on anything.
+
+## Update the backend + set the team passcode (do this once after this update)
+After this, the app only works for people who know the team passcode. The web-app link stays the same.
+
+**A. Paste the new code**
+1. Open the CurtainCall sheet → **Extensions → Apps Script**.
+2. Open https://github.com/steph1420/choir-attendance/blob/curtaincall-stage1/apps-script/Code.gs → click **Copy raw file**.
+3. In Apps Script: click in the code box → **Ctrl+A** → **Ctrl+V** → **💾 Save**.
+
+**B. Set the team passcode**
+4. Go back to the sheet tab and **reload the page** (so the menu updates).
+5. Menu **CurtainCall → Set team passcode**. (If Google asks for permission, click Allow.)
+6. Type a passcode of at least 6 characters (for example a short phrase only your team knows) → **OK**.
+   Only a scrambled version is stored, so even you can't read it back — write it down somewhere safe.
+
+**C. Publish the new version (same link)**
+7. In Apps Script, top-right: **Deploy → Manage deployments**.
+8. Click the **✏️ pencil** (edit) on the existing web app.
+9. Under **Version**, choose **New version**. Leave everything else as it is.
+10. Click **Deploy**. The URL shown should be the **same** as before. Done.
+
+**D. Tell your team**
+11. Share the passcode with teachers privately (not in a group chat with parents). The app asks for it once per device.
+To change it later, just repeat step 5 — everyone will be asked for the new one.

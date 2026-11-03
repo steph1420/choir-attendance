@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 // Minimal in-memory fake of the Apps Script APIs Code.gs uses (CODE-3/4).
 export class FakeSheet {
   rows: unknown[][] = []
@@ -23,16 +24,19 @@ export function loadCodeGs(src: string, tabs: Record<string, unknown[][]>, roste
   const rs = new Map<string, FakeSheet>()
   for (const [n, rows] of Object.entries(roster ?? {})) { const s = new FakeSheet(n); s.rows = rows.map(r => [...r]); rs.set(n, s) }
   const rss = { getSheetByName: (n: string) => rs.get(n) ?? null, getSheets: () => [...rs.values()] }
-  const props: Record<string, string> = {}
+  const props: Record<string, string> = { CC_PASSCODE_HASH: createHash('sha256').update('test-pass').digest('hex') }
   const g = {
     SpreadsheetApp: { getActive: () => ss, openById: () => (roster ? rss : ss), getUi: () => { throw new Error('no ui') } },
     ContentService: { MimeType: { JSON: 'json' }, createTextOutput: (t: string) => ({ setMimeType: () => ({ text: t }) }) },
     LockService: { getScriptLock: () => ({ waitLock() {}, releaseLock() {} }) },
     PropertiesService: { getScriptProperties: () => ({ getProperty: (k: string) => props[k] ?? '', setProperty: (k: string, v: string) => { props[k] = v } }) },
-    Utilities: { formatDate: (d: Date) => d.toISOString().slice(0, 10) },
+    Utilities: { formatDate: (d: Date) => d.toISOString().slice(0, 10), DigestAlgorithm: { SHA_256: 'sha256' }, Charset: { UTF_8: 'utf8' }, computeDigest: (_a: string, s: string) => [...createHash('sha256').update(s, 'utf8').digest()].map(b => (b > 127 ? b - 256 : b)) },
     Session: { getScriptTimeZone: () => 'Asia/Kolkata' },
   }
-  const fn = new Function(...Object.keys(g), `${src}\nreturn { setup, doPost, doGet, HEADERS, importRoster, onOpen };`)
+  const fn = new Function(...Object.keys(g), `${src}\nreturn { setup, doPost, doGet, HEADERS, importRoster, onOpen, setTeamPasscode };`)
   const api = fn(...Object.values(g))
-  return { ...api, sheets, rosterSheets: rs, call: (o: { text: string }) => JSON.parse(o.text) }
+  // Existing tests send the test passcode automatically; raw* skip that for passcode tests.
+  const doGet = (e: { parameter?: Record<string, string> } = {}) => api.doGet({ ...e, parameter: { pass: 'test-pass', ...(e.parameter ?? {}) } })
+  const doPost = (e: { postData: { contents: string } }) => { const b = JSON.parse(e.postData.contents); return api.doPost({ postData: { contents: JSON.stringify({ pass: 'test-pass', ...b }) } }) }
+  return { ...api, doGet, doPost, rawDoGet: api.doGet, rawDoPost: api.doPost, props, setUi: (ui: unknown) => { g.SpreadsheetApp.getUi = () => ui as never }, sheets, rosterSheets: rs, call: (o: { text: string }) => JSON.parse(o.text) }
 }

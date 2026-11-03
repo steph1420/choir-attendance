@@ -56,12 +56,24 @@ function checkHeaders_(sh, name) {
 function dataRows_(sh, ncol) { var n = sh.getLastRow(); return n < FIRST_ROW ? [] : sh.getRange(FIRST_ROW, 1, n - FIRST_ROW + 1, ncol).getValues(); }
 function isoDate_(d) { if (d instanceof Date) return Utilities.formatDate(d, Session.getScriptTimeZone(), 'yyyy-MM-dd'); return String(d).slice(0, 10); }
 
+/** Q82b team passcode: every GET/POST must carry it (GET ?pass=, POST body.pass). Only its SHA-256 is stored, in Script Property CC_PASSCODE_HASH. */
+function sha256Hex_(s) { return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(s), Utilities.Charset.UTF_8).map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join(''); }
+function passOk_(pass) { var h = PropertiesService.getScriptProperties().getProperty('CC_PASSCODE_HASH'); return !!h && !!pass && sha256Hex_(pass) === h; }
+function denied_() { return json_({ v: CONTRACT_V, ok: false, auth: false, status: 401, error: 'passcode required' }); }
+/** Menu: CurtainCall > Set team passcode. */
+function setTeamPasscode() {
+  var ui = SpreadsheetApp.getUi(), r = ui.prompt('Set team passcode', 'Type the passcode teachers will enter in the app (at least 6 characters):', ui.ButtonSet.OK_CANCEL);
+  if (r.getSelectedButton() !== ui.Button.OK) return;
+  var p = r.getResponseText().trim(); if (p.length < 6) { ui.alert('Too short — use at least 6 characters.'); return; }
+  PropertiesService.getScriptProperties().setProperty('CC_PASSCODE_HASH', sha256Hex_(p)); ui.alert('Passcode saved. Tell your team; the app will ask for it once.');
+}
 function json_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 
 function doPost(e) {
   var lock = LockService.getScriptLock(); lock.waitLock(20000);
   try {
     var body = JSON.parse(e.postData.contents);
+    if (!passOk_(body.pass)) return denied_();
     if (SUPPORTED_V.indexOf(body.v) < 0) return json_({ v: CONTRACT_V, ok: false, error: 'contract version ' + body.v + ' not supported' });
     var ss = SpreadsheetApp.getActive();
     var log = ss.getSheetByName(TABS.log), seen = seenKeys_(log), acked = 0;
@@ -120,6 +132,7 @@ function upsertSession_(ss, sid, patch) {
 
 /** Pull: app reads members, sessions, attendance and un-applied Manual Edits. Manual Edits win, then get stamped Applied. */
 function doGet(e) {
+  if (!passOk_(e && e.parameter && e.parameter.pass)) return denied_();
   try { return doGet_(e); } catch (err) { return json_({ v: CONTRACT_V, ok: false, error: String(err.message || err) }); }
 }
 function doGet_(e) {
@@ -173,7 +186,7 @@ function rosterRows_(sh) {
 
 /** Menu: CurtainCall > Import roster. Runs inside Steve's Google account, so names never leave Google. */
 function onOpen() {
-  SpreadsheetApp.getUi().createMenu('CurtainCall').addItem('Import roster', 'importRoster').addItem('Set up tabs', 'setup').addToUi();
+  SpreadsheetApp.getUi().createMenu('CurtainCall').addItem('Import roster', 'importRoster').addItem('Set up tabs', 'setup').addItem('Set team passcode', 'setTeamPasscode').addToUi();
 }
 
 /**

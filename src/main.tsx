@@ -6,7 +6,7 @@ import { sampleChildren, sampleSession } from './data/sample'
 import { Store } from './data/store'
 import { AppsScriptSync, FakeSync } from './data/sync'
 import './cc/cc.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import { AppShell, type Tab } from './cc/AppShell'
 import { QuickNotes } from './cc/quicknotes'
 import { Collection } from './cc/collection'
@@ -15,12 +15,15 @@ import type { Costume, Note, Prop } from './cc/kinds'
 import { TemplatePicker } from './cc/TemplatePicker'
 import { loadEvent, saveEvent, makeEvent, KEY, loadEvents, activeEvent, EVENTS_KEY, addEvent, type Events } from './cc/templates'
 import { Puller } from './cc/pull'
+import { Auth } from './cc/auth'
+import { PasscodeScreen } from './cc/PasscodeScreen'
 import { History, trackCollection, trackStore } from './cc/history'
 import { loadPrefs, PREFS_KEY, type CareFlag, type Prefs } from './cc/access'
 const override = localStorage.getItem('choir-attendance/endpoint')
 // 'off' = this device only; no override = default backend from config. ?local forces device-only (screenshots/tests).
 const url = new URLSearchParams(location.search).has('local') || override === 'off' ? null : override || CONFIG.defaultEndpoint
-const adapter = url ? new AppsScriptSync(url) : new FakeSync()
+const auth = new Auth(localStorage)
+const adapter = url ? new AppsScriptSync(url, auth as never) : new FakeSync()
 const params = new URLSearchParams(location.search)
 if (params.has('offline') && adapter instanceof FakeSync) adapter.isOnline = false
 if (params.has('reset')) { localStorage.removeItem(CONFIG.storageKey); localStorage.removeItem(KEY); localStorage.removeItem(EVENTS_KEY); localStorage.removeItem(PREFS_KEY); for (const k of ['costumes', 'props', 'notes', 'quicknotes', 'care', 'events', 'permissions']) localStorage.removeItem(`curtaincall/${k}/v1`); localStorage.removeItem('curtaincall/tip-today') }
@@ -48,7 +51,7 @@ function applyScope(evs: Events | null) {
   store.adoptSessions(id); qn.setScope(id); for (const k of ['costumes', 'props', 'notes'] as const) cols[k].setScope(id)
 }
 applyScope(loadEvents(localStorage))
-const puller = new Puller(url, { events: sync2.events, costumes: cols.costumes, props: cols.props, notes: cols.notes, quicknotes: qn, care: cols.care, permissions: sync2.permissions } as never)
+const puller = new Puller(url, { events: sync2.events, costumes: cols.costumes, props: cols.props, notes: cols.notes, quicknotes: qn, care: cols.care, permissions: sync2.permissions } as never, undefined, undefined, undefined, auth as never)
 puller.start(60000)
 const setEndpoint = (u: string) => { if (u) localStorage.setItem('choir-attendance/endpoint', u); else localStorage.removeItem('choir-attendance/endpoint'); location.reload() }
 const hist = new History(); trackStore(store, hist); trackCollection(cols.costumes, hist, 'costume'); trackCollection(cols.props, hist, 'prop')
@@ -67,6 +70,8 @@ function Root() {
     const caps = sync2.permissions.state.items.find(i => i.id === 'care-flag-caps') as unknown as (Prefs['caps'] & { id: string }) | undefined
     if (caps) setPrefsS(p => { const { id: _id, ...c } = caps; if (JSON.stringify(c) === JSON.stringify(p.caps)) return p; const n = { ...p, caps: c as Prefs['caps'] }; localStorage.setItem(PREFS_KEY, JSON.stringify(n)); return n })
   }), [])
+  useSyncExternalStore(auth.subscribe, auth.snap)
+  if (url && !auth.pass) return <PasscodeScreen wrong={auth.wrong} onSave={p => { auth.set(p); void puller.pull(); void store.flush() }} onLocal={() => setEndpoint('off')} />
   if (!evs) return <TemplatePicker onDone={e => setEvs(addEvent(null, e))} />
   const role = params.get('role'); const pr = role ? { ...prefs, role: role as Prefs['role'] } : prefs
   return <AppShell store={store} qn={qn} ev={activeEvent(evs)} cols={cols} ctx={{ puller, endpoint: url ?? '', setEndpoint, hist, evs, setEvs, prefs: pr, setPrefs }} initialShow={params.get('show') === 'props' ? 'props' : 'costumes'} initialTab={(params.get('tab') as Tab) ?? 'today'} initialNote={params.has('note')} />
