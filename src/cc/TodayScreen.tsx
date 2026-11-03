@@ -1,8 +1,6 @@
 // Today v2 (Steve t43u–t47u): compact panel that is NORMAL scroll content (never collapses).
-// Resting point R = top of the first section header. Scrolling/flinging up from inside the list stops at R;
-// a fling springs past R (peeking the panel) and settles back. A NEW swipe/wheel burst that starts at R reveals the panel.
+// Normal scrolling (Steve t51u: spring-peek removed); section headers stay sticky.
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { animate } from 'framer-motion'
 import { CONFIG } from '../config'
 import { countMarks, groupChildren } from '../data/derive'
 import type { GroupBy, Session } from '../data/model'
@@ -18,32 +16,12 @@ export function TodayScreen({ store, session, title, sub, sync, actions, groupLa
   const [by, setBy] = useState<GroupBy>('section'); const [note, setNote] = useState<string | null>(null); const [info, setInfo] = useState(false)
   const [tip, setTip] = useState(() => localStorage.getItem('curtaincall/tip-today') !== 'off')
   const scroller = useRef<HTMLDivElement>(null), groupsRef = useRef<HTMLDivElement>(null)
-  const g = useRef({ armed: true, y: 0, t: 0, v: 0, busy: false, wheelT: 0 })
   const c = countMarks(kids, s.entries, CONFIG.excusedCountsAs)
-  const rest = () => groupsRef.current?.offsetTop ?? 0
-  const atRest = () => (scroller.current?.scrollTop ?? 0) <= rest() + 2
-  const snap = () => {
-    const el = scroller.current; if (!el) return; const st = g.current; st.busy = true
-    el.style.overflowY = 'hidden' // kills native momentum on Android Chrome
-    const R = rest(), v = Math.max(-2600, Math.min(0, st.v * 1600)) // px/s, upward; spring overshoot = the peek
-    animate(el.scrollTop, R, { type: 'spring', velocity: v, stiffness: 380, damping: 24, restDelta: 0.5,
-      onUpdate: x => { el.scrollTop = Math.max(Math.min(x, R + 400), R - Math.min(R * 0.6, 200)) },
-      onComplete: () => { el.scrollTop = R; el.style.overflowY = ''; st.busy = false; st.armed = false; el.dataset.rested = String(Date.now()) } })
-  }
-  const onScroll = () => {
-    const el = scroller.current; if (!el) return; const st = g.current; const y = el.scrollTop, now = performance.now()
-    const dt = Math.max(1, now - st.t); st.v = 0.6 * ((y - st.y) / dt) + 0.4 * st.v; const prev = st.y; st.y = y; st.t = now
-    if (st.busy || st.armed) return
-    const R = rest(); if (prev >= R - 1 && y < R - 1) snap()
-  }
-  const startGesture = () => { const st = g.current; if (st.busy) return; st.armed = atRest() }
-  const onTouchStart = () => startGesture()
-  const onWheel = () => { const st = g.current, n = performance.now(); if (n - st.wheelT > 300) startGesture(); st.wheelT = n }
   // "Taken by" is remembered once: the device's teacher signs the session on the first mark.
   useEffect(() => { if (!s.takenBy && Object.keys(s.entries).length && teacher) store.dispatch({ t: 'takenBy', sessionId: sid, name: teacher }) }, [s.entries, s.takenBy, sid, teacher, store])
   const groups = groupChildren(kids, by); const noteChild = kids.find(k => k.id === note)
   if (!kids.length) return <div className="cc-ph"><h1 className="pt">{title}</h1><p className="cc-sub">Loading the {groupLabel.toLowerCase()} list…</p></div>
-  return <div className="cc-today" ref={scroller} onScroll={onScroll} onTouchStart={onTouchStart} onWheel={onWheel}>
+  return <div className="cc-today" ref={scroller}>
     <div className="cc-bar">
       <div className="cc-bar1">
         <button className="cc-title" onClick={() => setInfo(true)} aria-label="Session details"><b>{title}</b><small>{sub} · {s.takenBy ?? teacher}</small></button>

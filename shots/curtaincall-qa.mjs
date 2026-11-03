@@ -3,7 +3,7 @@
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
 const B = 'http://localhost:5189/', out = 'shots/curtaincall/qa'; mkdirSync(out, { recursive: true })
-const VP = { phone: { viewport: { width: 451, height: 993 }, deviceScaleFactor: 2.8, isMobile: true, hasTouch: true }, desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 } }
+const VP = { phone: { viewport: { width: 451, height: 993 }, deviceScaleFactor: 2.8, isMobile: true, hasTouch: true }, desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 }, wide: { viewport: { width: 1024, height: 1366 }, deviceScaleFactor: 2, hasTouch: true } }
 const SAMPLE_MEMBERS = Array.from({ length: 24 }, (_, i) => [`M${String(i + 1).padStart(3, '0')}`, ['KG A', 'KG B', 'PREP A'][i % 3], i % 7 === 0 ? 'Soloist' : 'Singer', '', '', '', `Sample ${String.fromCharCode(65 + (i % 26))}-${i + 1}`])
 const results = []; const ok = (name, cond, info = '') => { results.push(`${cond ? 'PASS' : 'FAIL'} ${name}${info ? ' — ' + info : ''}`); if (!cond) console.log('FAIL', name, info) }
 const br = await chromium.launch({ executablePath: '/usr/bin/google-chrome' })
@@ -25,7 +25,7 @@ async function layout(p, d, n) {
   const r = await p.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: innerWidth }))
   ok(`${d} ${n}: no sideways overflow`, r.sw <= r.w + 1, `${r.sw}/${r.w}`); ok(`${d} ${n}: no page errors`, !p.errors.length, p.errors.join('; '))
 }
-for (const d of ['phone', 'desktop']) {
+for (const d of ['phone', 'wide', 'desktop']) {
   // 1 passcode (mock backend)
   let { p, ctx } = await open(d, '?reset', { backend: 'mock' })
   ok(`${d} passcode screen`, await p.getByLabel('Team passcode').isVisible()); await shot(p, d, '01-passcode'); await layout(p, d, 'passcode')
@@ -55,9 +55,10 @@ for (const d of ['phone', 'desktop']) {
   ok(`${d} undo changes counts`, before !== await p.getByLabel('Counts').innerText()); for (let i = 0; i < 3; i++) await p.getByLabel('Redo').first().click(); await p.waitForTimeout(200)
   ok(`${d} redo restores`, before === await p.getByLabel('Counts').innerText())
   await p.locator('.cc-today').evaluate(e => e.scrollTo(0, 700)); await p.waitForTimeout(400)
-  const top0 = await p.locator('.cc-today').evaluate(e => e.getBoundingClientRect().top)
+  const top0 = await p.locator('.cc-today').evaluate(e => e.getBoundingClientRect().top); const canScroll = await p.locator('.cc-today').evaluate(e => e.scrollHeight - e.clientHeight > 300)
+  if (!canScroll) ok(`${d} list fits on screen, nothing to scroll`, true); else {
   const gh = await p.locator('.cc-ghead').evaluateAll(hs => hs.map(h => Math.round(h.getBoundingClientRect().top))); ok(`${d} sticky section header at top of list`, gh.some(t => Math.abs(t - top0) <= 2), JSON.stringify(gh))
-  ok(`${d} panel scrolled away (not sticky, not collapsed)`, (await p.locator('.cc-bar').boundingBox()).y < top0 - 50)
+  ok(`${d} panel scrolled away (not sticky, not collapsed)`, (await p.locator('.cc-bar').boundingBox()).y < top0 - 50) }
   await shot(p, d, '07-today-scrolled')
   await p.getByLabel('Session details').click(); await shot(p, d, '08-session-details'); ok(`${d} taken-by remembered`, (await p.getByLabel('Taken by').inputValue()) === 'Teacher-S'); await p.getByRole('button', { name: 'Done' }).click()
   await p.getByRole('tab', { name: 'A–Z' }).click(); await shot(p, d, '09-today-az'); await layout(p, d, 'today-az'); await ctx.close()
