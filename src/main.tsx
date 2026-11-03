@@ -17,7 +17,9 @@ import { loadEvent, saveEvent, makeEvent, KEY, loadEvents, activeEvent, EVENTS_K
 import { Puller } from './cc/pull'
 import { History, trackCollection, trackStore } from './cc/history'
 import { loadPrefs, PREFS_KEY, type CareFlag, type Prefs } from './cc/access'
-const url = localStorage.getItem('choir-attendance/endpoint')
+const override = localStorage.getItem('choir-attendance/endpoint')
+// 'off' = this device only; no override = default backend from config. ?local forces device-only (screenshots/tests).
+const url = new URLSearchParams(location.search).has('local') || override === 'off' ? null : override || CONFIG.defaultEndpoint
 const adapter = url ? new AppsScriptSync(url) : new FakeSync()
 const params = new URLSearchParams(location.search)
 if (params.has('offline') && adapter instanceof FakeSync) adapter.isOnline = false
