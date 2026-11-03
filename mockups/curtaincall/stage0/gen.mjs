@@ -30,7 +30,7 @@ const dockI=[['☀','Today'],['🎭','Show'],['👥','Members'],['📝','Notes']
 const dock=a=>`<div class="dock">${dockI.map(([i,t])=>`<div class="${t==a?'on':''}"><b>${i}</b>${t}</div>`).join('')}</div>`;
 const rail=a=>`<div class="rail"><div class="lg">🎭 CurtainCall</div>${dockI.map(([i,t])=>`<div class="i ${t==a?'on':''}">${i} ${t}</div>`).join('')}<div style="flex:1"></div><div class="i">⚙ Settings</div><div class="dim" style="padding:8px 12px">Signed in: Teacher-S<br>Synced 12:16</div></div>`;
 const top=(t,s,x='')=>`<div class="top"><div style="flex:1"><h1>${t}</h1><div class="sub">${s}</div></div>${x}<div class="ib">⚙</div></div>`;
-const page=(w,h,inner)=>`<!doctype html><meta charset=utf-8><style>${css}body{width:${w}px;height:${h}px;position:relative}</style>${inner}`;
+const page=(w,h,inner)=>`<!doctype html><meta charset=utf-8><style>${css}body{width:${w}px;height:${h}px;position:relative}${w<500?'.dock{position:absolute;bottom:0;left:0;right:0}.body{padding-bottom:90px}':''}</style>${inner}`;
 const kids=[['Child A1','P',''],['Child A2','P','⚕'],['Child A3','A',''],['Child A4','E','★'],['Child A5','P',''],['Child A6','P',''],['Child A7','P','⚕'],['Child A8','A','']];
 const L={P:'Present',A:'Absent',E:'Excused'};
 const krow=k=>`<div class="row r${k[1]}"><div class="av">${k[0].slice(-2)}</div><div class="n">${k[0]} ${k[2]=='★'?'<span class="dim" title="special role">★ Soloist</span>':''}${k[2]=='⚕'?' <span class="care" title="care flag (coordinators only)">⚕</span>':''}</div><span class="st ${k[1]}">${k[1]}</span></div>`;
