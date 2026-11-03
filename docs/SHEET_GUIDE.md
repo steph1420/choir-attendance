@@ -4,7 +4,7 @@ TEST sheet: **A-02 Choir Attendance — TEST** (placeholder children only). Ever
 
 | Tab | Who types | What it is |
 |---|---|---|
-| Read Me | — | How it works + colour legend (P green, A grey, L amber, E blue) and status legend |
+| Read Me | — | How it works + colour legend (P green, A grey, L amber, E violet) and status legend |
 | ✏️ Manual Edits | **Teacher** | Fix a mark: Date · Hour · Child ID · New mark · Reason (E only) · Note. *Status*, *Applied at*, *Name* are automatic (locked, grey) |
 | ✏️ Members | **Teacher** | Who is in choir: Child ID · Section · Role (Singer/Action/Prop, more allowed) · From · To · Note. *Name* automatic |
 | ✏️ Timetable | **Teacher** | Golden Hour slots: Day · Hour · Start · End · Venue · Active? |
@@ -21,7 +21,7 @@ TEST sheet: **A-02 Choir Attendance — TEST** (placeholder children only). Ever
 4. On the next app sync the script applies it (your fix wins), sets **✓ Applied** (green) and the time. A problem shows **⚠ Error: …** (red) — fix the row, then ask the owner to clear Status.
 
 ## Colours
-Banner: yellow = you can type; grey = system; blue = reports. Marks: P green · A grey · L amber · E blue.
+Banner: yellow = you can type; grey = system; blue = reports. Marks: P green · A grey · L amber · E violet.
 
 ## Protection
 System tabs and automatic columns are locked (owner only). Banner/header rows warn before editing.
