@@ -41,3 +41,17 @@ Toggle By item / By child = segmented control in the header (remembered per devi
 7. Templates for the empty state: which starter items per template (Choir / Play / Dance / Sports day)?
 8. Photos: stored in Drive (Q71a) — one folder per event OK?
 9. Should By item show a size tally for ordering ("S 4 · M 6") per source/maker?
+
+## Q91–Q98 (locked 5 Nov 2026)
+Steve, t55u "All of your choices!" (20:52 IST). Open questions 1–6, 8, 9 above are now answered; question 7 (templates) stays open. Superseded wording above is kept for history.
+| Q | Locked | Mockup |
+|---|---|---|
+| Q91 quantity | (a) per child (each child has own count, default 1) | K2 "×1", K4 Quantity "Per child" |
+| Q92 tap to advance stage | (a) any teacher | K2 toast "any teacher can tap" |
+| Q93 measurements | (a) default list height, chest, waist, length + ＋ Add your own | K6 |
+| Q94 units | (b) cm / in switch | K6 |
+| Q95 cost visibility | (a) permission-gated like care flags (🔒 state otherwise) | K4, K9 |
+| Q96 lost item | (a) mark Lost + app prepares WhatsApp text to parent; user sends | K9 (new) |
+| Q97 By-item size tally | (a) yes, e.g. "S 4 · M 6 · L 2" | K1 |
+| Q98 photos | (a) one Google Drive folder per event | K4 photo caption |
+v2 renders: `*-v2.png` (K1–K9); v1 PNGs kept.
