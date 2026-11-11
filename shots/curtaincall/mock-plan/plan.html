@@ -1,0 +1,101 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root{--bg:#10131b;--s1:#171b26;--s2:#1e2332;--line:#2a3042;--t:#eef1f7;--t2:#aab1c2;--t3:#7b8397;--blue:#4c8dff;--p:#3ecf8e;--a:#ff7a7a;--l:#f5b74e;--e:#a78bfa;--c1:#5aa9ff;--c2:#ff8fb1;--c3:#7ee0b5;--c4:#ffc36b}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--t);font:15px/1.4 "Segoe UI",system-ui,sans-serif;height:100vh;overflow:hidden}
+.main{height:100vh;overflow:hidden;position:relative}
+.dock{position:absolute;bottom:0;left:0;right:0;height:72px;background:#0c0f16;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;color:var(--t3);font-size:12px;z-index:30}.dock span{width:20%;text-align:center}.dock b{display:block;font-size:20px}.dock .on{color:var(--blue)}
+.top{padding:18px 18px 10px;display:flex;align-items:center;gap:10px}.top h1{font-size:24px;font-weight:650;flex:1}.top small{display:block;font-size:13px;color:var(--t3);font-weight:400}
+.ib{width:38px;height:38px;border-radius:11px;background:var(--s1);display:grid;place-items:center;color:var(--t2);font-size:17px;flex:none}
+.seg{margin:0 18px 10px;display:flex;background:var(--s1);border-radius:11px;padding:3px}.seg span{flex:1;text-align:center;padding:7px;border-radius:9px;font-size:13.5px;color:var(--t3)}.seg .on{background:var(--s2);color:var(--t)}
+.tiles{display:flex;gap:8px;margin:0 18px 6px}.tiles span{flex:1;background:var(--s1);border-radius:12px;padding:8px 4px;text-align:center;font-size:12.5px;color:var(--t2)}
+.h2{font-size:17px;font-weight:650;padding:10px 20px 2px}
+.cap{font-size:11.5px;letter-spacing:.09em;color:var(--t3);text-transform:uppercase;padding:14px 20px 8px;display:flex;justify-content:space-between}.cap a{color:var(--blue);text-transform:none;letter-spacing:0;font-size:13px}
+.card{border-radius:18px;background:var(--s1);padding:14px;margin:0 14px 10px}
+.row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;background:var(--s1);margin:0 14px 8px}.row .n{flex:1;min-width:0}.row .n b{font-weight:600;display:block}.row .n small{color:var(--t3);font-size:12.5px}
+.av{border-radius:50%;display:grid;place-items:center;font-weight:700;flex:none;color:#10131b;width:28px;height:28px;font-size:11px}.avs{display:flex}.avs .av+.av{margin-left:-7px;box-shadow:0 0 0 2px var(--s1)}
+.due{font-size:12px;font-weight:650;padding:4px 10px;border-radius:99px;background:var(--s2);color:var(--t2);white-space:nowrap}.due.soon{color:var(--l);background:color-mix(in srgb,var(--l) 14%,transparent)}.due.ok{color:var(--p);background:color-mix(in srgb,var(--p) 14%,transparent)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.ch{display:flex;align-items:center;gap:8px;padding:12px 20px 7px}.ch i{width:10px;height:10px;border-radius:3px}.ch b{font-size:14px;font-weight:650}.ch small{color:var(--t3);font-size:12px;margin-left:auto}
+.now{display:flex;gap:12px;align-items:center}.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;color:var(--blue);background:color-mix(in srgb,var(--blue) 16%,transparent);white-space:nowrap}
+.sheet{position:absolute;left:0;right:0;bottom:0;top:96px;background:var(--s2);border-radius:24px 24px 0 0;z-index:21;padding:12px 20px 90px;display:flex;flex-direction:column;gap:11px}.scrim{position:absolute;inset:0;background:#0009;z-index:20}.grab{width:40px;height:5px;border-radius:9px;background:var(--line);align-self:center}
+.fld{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--s1);font-size:14.5px}.fld>span:first-child{color:var(--t3)}
+.stp{display:flex;background:var(--s1);border-radius:12px;padding:3px}.stp span{flex:1;text-align:center;font-size:12.5px;padding:8px 2px;border-radius:9px;color:var(--t3)}.stp .on{background:color-mix(in srgb,var(--blue) 22%,transparent);color:var(--t)}
+.cb{width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;flex:none}.cb.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.grid{margin:0 14px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.cell{background:var(--s1);border-radius:14px;padding:11px;min-height:74px}.cell small{color:var(--t3);font-size:11.5px;display:block}.cell b{font-size:14px;font-weight:600}
+.blk{display:flex;align-items:baseline;gap:8px;padding:14px 20px 8px}.blk b{font-size:15px}.blk small{color:var(--t3)}
+.days{display:flex;gap:6px;margin:0 18px 4px}.days span{flex:1;text-align:center;padding:8px 0;border-radius:12px;background:var(--s1);font-size:12px;color:var(--t3)}.days span b{display:block;font-size:16px;color:var(--t2)}.days .on{background:var(--blue);color:#fff}.days .on b{color:#fff}
+.cd{width:54px;text-align:center;flex:none}.cd b{font-size:22px;display:block;line-height:1}.cd small{font-size:11px;color:var(--t3)}
+.thumb{width:58px;height:74px;border-radius:8px;flex:none;background:linear-gradient(#f3efe4,#e6dfcc);position:relative;overflow:hidden}.thumb i{position:absolute;left:8px;right:8px;height:3px;border-radius:2px;background:#8a8170;opacity:.55}
+.hint{margin:4px 14px 10px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--blue) 10%,transparent);color:var(--t2);font-size:12.5px;display:flex;gap:8px}
+.chips{display:flex;gap:6px;margin:4px 18px 2px}.chips span{padding:5px 12px;border-radius:99px;font-size:12.5px;background:var(--s1);color:var(--t3)}.chips .on{background:var(--s2);color:var(--t)}
+</style></head><body><div class="main" id="m"></div><script>
+const S=new URLSearchParams(location.search).get('s')
+const C={Reception:'var(--c1)',Seating:'var(--c3)','Sound & Light':'var(--e)','Hall Decoration':'var(--c2)','Stage Coordination':'var(--c4)'}
+const P={A:'var(--c1)',B:'var(--c2)',C:'var(--c3)',D:'var(--c4)',E:'var(--e)',F:'#9fd3ff'}
+const av=k=>`<div class="av" style="background:${P[k]}">T${k}</div>`
+const dock=on=>`<div class="dock">${[['☀','Today'],['🎭','Show'],['🗂','Plan'],['👥','Members'],['📝','Notes']].map(([i,l])=>`<span class="${l==on?'on':''}"><b>${i}</b>${l}</span>`).join('')}</div>`
+const st={todo:'var(--t3)',doing:'var(--blue)',sign:'var(--l)',done:'var(--p)'},stl={todo:'To do',doing:'Doing',sign:'Waiting for approval',done:'Approved'}
+const seg=on=>`<div class="seg">${['Duties','Schedule','Dates'].map(x=>`<span class="${x==on?'on':''}">${x}</span>`).join('')}</div>`
+const planTop=`<div class="top"><h1>Plan<small>Parents' Day 2027</small></h1><div class="ib">⌕</div><div class="ib">＋</div></div>`
+let h=''
+if(S==1){h=`<div class="top"><h1>Good morning<small>Wednesday, 11 November</small></h1><div class="ib">⌕</div><div class="ib">⚙</div></div>
+<div class="card"><div class="now"><span class="badge">NOW</span><div style="flex:1"><b>Golden Hour 1</b> <span style="color:var(--t3);font-size:13px">· 7:40 – 8:30</span></div></div>
+<div style="margin-top:12px;display:grid;gap:9px">
+<div class="now"><span class="dot" style="background:var(--c1)"></span><div style="flex:1">Welcome Song</div><small style="color:var(--t3)">Auditorium</small></div>
+<div class="now"><span class="dot" style="background:var(--c2)"></span><div style="flex:1">Medley</div><small style="color:var(--t3)">Hall</small></div></div>
+<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--t3)">Next · Golden Hour 2 at 10:30 · English Play in the Play Area</div></div>
+<div class="cap"><span>My Duties</span><a>See all</a></div>
+<div class="row"><span class="dot" style="background:${C['Stage Coordination']}"></span><div class="n"><b>Stage running order</b><small>Stage Coordination · approval on/before</small></div><span class="due soon">Sat 14 Nov</span></div>
+<div class="row"><span class="dot" style="background:${C['Sound & Light']}"></span><div class="n"><b>Music tracks list</b><small>Sound & Light · approval on/before</small></div><span class="due">Wed 25 Nov</span></div>
+<div class="cap"><span>Important Dates</span><a>All dates</a></div>
+<div class="row"><div class="cd"><b>9</b><small>days</small></div><div class="n"><b>Orientation with parents</b><small>Fri 20 Nov · Hall</small></div></div>
+<div class="row"><div class="cd"><b>12</b><small>days</small></div><div class="n"><b>Meeting · Co-ordinators</b><small>Mon 23 Nov · Staff room</small></div></div>
+<div class="row"><div class="cd"><b>69</b><small>days</small></div><div class="n"><b>Dress Rehearsal · Sec A</b><small>Tue 19 Jan · Auditorium</small></div></div>
+<div class="cap"><span>Latest notice</span></div>
+<div class="row"><div class="thumb" style="width:40px;height:50px"><i style="top:10px"></i><i style="top:18px"></i><i style="top:26px"></i></div><div class="n"><b>Notice 7 · Practice Schedule</b><small>9 Nov · from the Co-ordinator</small></div><span style="color:var(--t3)">›</span></div>`+dock('Today')}
+if(S==2){const D=[['Reception',[['Welcome desk & guest list',['A','B'],'Sat 14 Nov','soon','doing'],['Chief guest welcome',['C'],'Sat 5 Dec','','todo']]],['Seating',[['Seating plan for parents',['D','E'],'Sat 28 Nov','','sign']]],['Sound & Light',[['Music tracks list',['A'],'Wed 25 Nov','','doing'],['Mic check plan',['F','B'],'Approved','ok','done']]],['Hall Decoration',[['Backdrop & flowers',['B','C'],'Tue 1 Dec','','todo']]]]
+h=planTop+seg('Duties')+`<div class="tiles"><span>🗓 Meetings</span><span>📄 Notices</span><span>📊 Reports</span></div><div class="h2">Duties & Responsibilities</div>
+<div class="chips"><span class="on">By committee</span><span>By teacher</span><span>By date</span><span style="margin-left:auto">Mine</span></div>`
+for(const [c,ds] of D){h+=`<div class="ch"><i style="background:${C[c]}"></i><b>${c}</b><small>${ds.filter(d=>d[4]=='done').length} of ${ds.length} approved</small></div>`
+for(const d of ds)h+=`<div class="row"><span class="dot" style="background:${st[d[4]]}"></span><div class="n"><b>${d[0]}</b><small>${stl[d[4]]}</small></div><div class="avs">${d[1].map(av).join('')}</div><span class="due ${d[3]}">${d[2]}</span></div>`}
+h+=dock('Plan')}
+if(S==3){h=planTop+seg('Duties')+`<div class="scrim"></div><div class="sheet"><div class="grab"></div>
+<div style="display:flex;align-items:center;gap:8px"><span class="dot" style="background:${C.Reception}"></span><small style="color:var(--t3)">Reception committee</small><span style="margin-left:auto;color:var(--blue);font-weight:600">Done</span></div>
+<div><small style="color:var(--t3)">Nature of Work</small><h2 style="font-size:22px;font-weight:650">Welcome desk & guest list</h2></div>
+<div class="stp"><span>To do</span><span class="on">Doing</span><span>For approval</span><span>Approved</span></div>
+<div class="fld"><span>Teacher(s) In-charge</span><span style="display:flex;gap:6px;align-items:center">${av('A')} Teacher A&nbsp; ${av('B')} Teacher B</span></div>
+<div class="fld"><span>Approval on/before</span><span style="color:var(--l)">Sat 14 Nov · in 3 days</span></div>
+<div style="font-size:12px;color:var(--t3);margin-top:2px">CHECKLIST</div>
+${[['Table & chairs at entrance',1],['Printed guest list',1],['Badges for helpers',0]].map(([t,o])=>`<div style="display:flex;gap:10px;align-items:center;font-size:14.5px"><span class="cb ${o?'on':''}">${o?'✓':''}</span>${t}</div>`).join('')}
+<div style="font-size:12px;color:var(--t3);margin-top:2px">WORK STATUS REPORT</div>
+<div class="fld" style="display:block;color:var(--t2)">Guest list printed. Badges next week.<small style="display:block;color:var(--t3);margin-top:4px">Teacher A · yesterday</small></div>
+<div class="fld"><span style="color:var(--t2)">More options</span><span style="color:var(--t3);font-size:13px">Approved by, Ask, Keep informed ›</span></div>
+<div style="display:flex;gap:8px"><div class="fld" style="flex:1;justify-content:center;color:var(--blue)">＋ Add report</div><div class="fld" style="flex:1;justify-content:center;color:var(--t2)">Share</div></div>
+</div>`+dock('Plan')}
+if(S==4){h=planTop+seg('Schedule')+`<div class="h2" style="padding-top:2px">Practice Schedule</div><div class="chips" style="margin-bottom:8px"><span class="on">Day</span><span>Week</span><span>Month</span></div>
+<div class="days">${[['Mon',9],['Tue',10],['Wed',11],['Thu',12],['Fri',13]].map(([d,n])=>`<span class="${n==11?'on':''}">${d}<b>${n}</b></span>`).join('')}</div>`
+const B=[['Golden Hour 1','7:40 – 8:30',[['Auditorium','Welcome Song','c1','Choir'],['Hall','Medley','c2','KG A · KG B'],['Play Area','Rain Dance','c3','Prep A'],['Room 4','Free','','']]],['Golden Hour 2','10:30 – 11:20',[['Auditorium','English Play','c4','Scenes 1–2'],['Hall','Free','',''],['Play Area','Drill','e','Prep B'],['Room 4','Anchoring practice','c1','Programme Duties']]]]
+for(const [n,t,cs] of B){h+=`<div class="blk"><b>${n}</b><small>${t}</small>${n=='Golden Hour 1'?'<span class="badge" style="margin-left:auto">NOW</span>':''}</div><div class="grid">${cs.map(([r,i,c,g])=>`<div class="cell" style="${c?`border-left:4px solid var(--${c})`:'opacity:.5'}"><small>${r}</small><b>${i}</b><small>${g}</small></div>`).join('')}</div>`}
+h+=`<div class="hint" style="margin-top:12px">🗓 Weekly plan with effect from 9 Nov · tap a box to change just this day</div>`+dock('Plan')}
+if(S==5){h=planTop+seg('Dates')+`<div class="h2" style="padding-top:2px;padding-bottom:8px">Important Dates</div><div class="card" style="display:flex;gap:14px;align-items:center;background:color-mix(in srgb,var(--blue) 14%,var(--s1))"><div class="cd" style="width:64px"><b style="font-size:30px">9</b><small>days to go</small></div><div><small style="color:var(--t3)">NEXT</small><b style="display:block;font-size:17px">Orientation with parents</b><small style="color:var(--t2)">Fri 20 Nov · 9:00 · Hall</small></div></div>`
+const M=[['November',[['Sat 14','Audition · English Play','Auditorium','var(--c4)'],['Fri 20','Orientation with parents','Hall','var(--c1)'],['Mon 23','Meeting · Co-ordinators','Staff room','var(--e)']]],['December',[['Fri 4','Work Status Report due','','var(--l)']]],['January',[['Tue 19','Dress Rehearsal · Sec A','Auditorium','var(--c2)'],['Wed 20','Dress Rehearsal · Sec B','Auditorium','var(--c2)'],['Sat 30','Parents\' Day · Day 1 (Sec A)','Auditorium','var(--blue)']]]]
+for(const [m,ds] of M){h+=`<div class="cap" style="padding-top:10px"><span>${m}</span></div>`;for(const [d,t,w,c] of ds)h+=`<div class="row"><span class="dot" style="background:${c}"></span><div class="n"><b>${t}</b><small>${d}${w?' · '+w:''}</small></div></div>`}
+h+=dock('Plan')}
+if(S==6){h=`<div class="top"><div class="ib">‹</div><h1 style="font-size:21px">Notices</h1><div class="ib">＋</div></div>
+<div class="card" style="padding:16px"><div style="display:flex;gap:14px"><div style="display:flex;gap:6px">${[0,1].map(k=>`<div class="thumb"><i style="top:10px"></i><i style="top:18px;right:20px"></i><i style="top:28px"></i><i style="top:36px"></i><i style="top:44px;right:14px"></i><i style="top:54px"></i><span style="position:absolute;bottom:3px;right:5px;font-size:9px;color:#6b6455">p${k+1}</span></div>`).join('')}</div>
+<div style="flex:1"><small style="color:var(--t3)">9 NOV 2026</small><b style="display:block;font-size:17px">Notice 7</b><span style="color:var(--t2);font-size:14px">Practice Schedule</span><small style="display:block;color:var(--t3)">from the Co-ordinator</small></div></div>
+<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><span class="due ok">Created 9 duties</span><span class="due ok">6 dates</span><span class="due">1 weekly plan</span></div>
+<div style="font-size:12.5px;color:var(--t3);margin-top:12px">🔒 Original pictures kept as they are · 2 pages</div>
+<div style="display:flex;gap:8px;margin-top:12px"><div class="fld" style="flex:1;justify-content:center;color:var(--blue)">View pictures</div><div class="fld" style="flex:1;justify-content:center;color:var(--t2)">Print · Share</div></div></div>
+<div class="cap"><span>Earlier</span></div>`
+for(const [n,t,d,f] of [['6','Duties & Responsibilities','7 Oct','from the Head'],['3','Programme & Important Dates','3 Aug','from the Head']])h+=`<div class="row"><div class="thumb" style="width:40px;height:50px"><i style="top:10px"></i><i style="top:18px"></i><i style="top:26px"></i></div><div class="n"><b>Notice ${n}</b><small>${t} · ${d} · ${f}</small></div><span style="color:var(--t3)">›</span></div>`
+h+=`<div class="hint">📷 New notice: take a picture of the paper, then fill a ready form for duties, practice schedule, programme duties, dates or a meeting</div>`+dock('Plan')}
+if(S==7){h=`<div class="top"><h1>Show<small>Parents' Day 2027</small></h1><div class="ib">⌕</div><div class="ib">⚙</div></div>
+<div class="seg"><span>Running order</span><span class="on">Programme Duties</span></div>
+<div class="chips" style="margin-bottom:8px"><span class="on">Day 1 · Sec A · 30 Jan</span><span>Day 2 · Sec B · 31 Jan</span></div>
+<div class="hint">🔗 Entered once. These also show in the running order, next to each part of the programme.</div>`
+for(const [o,r,k,w] of [['1','Anchor','A','Whole programme'],['2','Opening Prayer','B','Start of show'],['3','Welcome Address','C','Start of show'],['9','Vote of Thanks','D','End of show']])h+=`<div class="row"><div style="width:20px;color:var(--t3);font-size:13px;text-align:center">${o}</div><div class="n"><b>${r}</b><small>${w}</small></div><span style="display:flex;gap:8px;align-items:center;font-size:14px">${av(k)} Teacher ${k}</span></div>`
+h+=`<div class="row" style="background:none;border:1px dashed var(--line);justify-content:center;color:var(--blue)">＋ Add a programme duty</div>
+<div class="cap"><span>In the running order · Day 1</span></div>
+<div class="card" style="font-size:14px;display:grid;gap:10px">${[['1','Opening Prayer','Teacher B'],['2','Welcome Address','Teacher C'],['3','Welcome Song',''],['4','Medley','']].map(([o,t,n])=>`<div style="display:flex;gap:10px;align-items:center"><span style="color:var(--t3);width:16px">${o}</span><span style="flex:1">${t}</span>${n?`<span class="badge">${n}</span>`:''}</div>`).join('')}</div>`+dock('Show')}
+document.getElementById('m').innerHTML=h
+</script></body></html>
