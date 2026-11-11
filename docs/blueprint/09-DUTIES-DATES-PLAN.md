@@ -1,6 +1,6 @@
-# CurtainCall: Duties & Dates (LOCKED plan, 2026-11-11, t100u)
+# CurtainCall: Duties & Responsibilities, Practice Schedule & Important Dates (LOCKED plan, 2026-11-11, t100u/t101u)
 
-Status: **LOCKED 2026-11-11 (Steve, t100u)**. Answers in section 9. Q113a supersedes the Q70 dock (Steve approved). Image mockups come before any build (v1: `shots/curtaincall/mock-plan/` on `curtaincall-mockups`).
+Status: **LOCKED 2026-11-11 (Steve, t100u; school terms t101u)**. Answers in section 9. Q113a supersedes the Q70 dock (Steve approved). Image mockups come before any build (v1: `shots/curtaincall/mock-plan/` on `curtaincall-mockups`).
 Privacy: placeholders only (Teacher A, Coordinator B, School-LF). No real names anywhere.
 Fits into the blueprint on `curtaincall-stage1` (`docs/blueprint/00`, `01`, `03`, `04`, `07`) and extends it. It is not a separate app.
 
@@ -34,48 +34,54 @@ Patterns worth borrowing:
 - **Whova:** Agenda plus a personal **My Agenda**.
 - **Apple HIG:** keep 3–5 flat tabs and avoid a "More" tab. Each tab drills down with Back. Edits open in sheets. On iPad the tab bar becomes a sidebar, with at most two levels shown.
 
-## 3. Recommended names (plain, official term in brackets)
+## 3. Names in the app (school terms, t101u; official term in brackets)
+Steve asked (t101u) for terms close to what his school uses. These replace the earlier suggestions.
 | Name in app | Official term | What it is |
 |---|---|---|
-| **Plan** (new tab) | Production office / production book | The home for all organising paperwork |
-| **Duties** | Duty roster · responsibility matrix (RACI) | Who looks after what, by when |
-| **Committees** | Committees / teams / departments | Groups of duties, e.g. Reception or Sound & Light |
-| **Schedule** | Rehearsal schedule · production calendar | The weekly timetable plus all one-off events |
-| **Key dates** | Milestones | Flagged dates such as auditions, dress rehearsals and deadlines |
-| **Meetings** | Agenda · minutes · action items | Meeting points, with decisions that turn into Duties |
-| **Notices** | Circulars | Numbered, dated, signed notices, each with the original photo or PDF |
-| **Updates** | Status reports | Short progress posts on a duty or committee |
-| **Roles on the day** (inside Show) | Run-of-show roles / programme roles | Anchor, Opening, Welcome, Thanks, per performance day |
-| **Rooms** (Settings) | Venues / locations / spaces | Auditorium, Hall, Play Area, classrooms |
-| **Time blocks** (Settings) | Periods / slots | Golden Hour 1, Golden Hour 2, … |
+| **Plan** (new tab) | Production office / production book | Home for all organising paperwork |
+| **Duties & Responsibilities** (short: **Duties** in tight spots) | Duty roster · responsibility matrix (RACI) | Who looks after what, by when |
+| **Nature of Work** | Task / deliverable name | The name of each duty, e.g. "Welcome desk & guest list" |
+| **Teacher(s) In-charge** | Responsible / Accountable (R, A in RACI) | The staff doing and owning the work; the first one listed is the main in-charge |
+| **Approval on/before** | Due date / deadline | Date the work must be shown for approval |
+| **Approved by** | Approver / sign-off (A in RACI) | Who approves, e.g. a Co-ordinator or the Head |
+| **Committees** | Committees / teams / departments | Groups of duties, e.g. Reception, Seating, Sound & Light |
+| **Practice Schedule** | Rehearsal schedule · production calendar | Weekly timetable plus one-off events |
+| **Golden Hour 1 / Golden Hour 2** (example names) | Time blocks / periods / slots | Renameable daily practice slots |
+| **Cultural Items** | Acts / numbers / programme items | Songs, dances, plays, groups that practise |
+| **Venues** | Locations / spaces | Auditorium, Hall, Play Area, classrooms |
+| **Important Dates** | Milestones / key dates | Audition, Orientation, Dress Rehearsal, Meeting, deadlines |
+| **Meetings** | Agenda · minutes · action items | Meeting points; decisions turn into Duties |
+| **Notices** (numbered "Notice 3", "Notice 7") | Circulars | Numbered, dated, signed notices with original pictures kept |
+| **Work Status Report** | Status report / status update | Short progress report on a duty or committee |
+| **Programme Duties** (inside Show) | Run-of-show roles / programme roles | Anchor, Opening Prayer, Welcome Address, Vote of Thanks, per Day 1 (Sec A) / Day 2 (Sec B) |
+| **Co-ordinator** (a staff role) | Coordinator / manager | Staff role that can approve and edit |
 
-Every label stays renameable, as locked in U-01. Event templates (Choir, Play, Dance, Sports day) come with ready-made Committees and Roles on the day. All wording is faith-neutral, so "Opening" is the default and the school can rename it.
+Every label stays renameable (U-01). Event templates (Choir, Play, Dance, Sports day) come with ready Committees and Programme Duties. Note: "Opening Prayer" is Steve's school term (t101u); it is only a default label and can be renamed per event (earlier rule: content stays faith-neutral).
 
 ## 4. Data model in plain words
-- **People.** Children, as today, plus **Staff** (adults). A staff member has a display name loaded at runtime, a role label (Teacher, Coordinator, Head) and optional contact details. Repo fixtures use codenames only.
-- **Committee.** A name, a colour, a lead, members, and an order.
-- **Duty.** Belongs to a Committee (optional) and has:
-  - a title and short details
-  - a **Lead** (one person, the accountable owner)
-  - **Helpers** (the people doing the work)
-  - a **Due** date
-  - optional **Sign-off by** (approver) and **Sign-off date**
-  - a status: To do → Doing → Waiting for sign-off → Done
+- **People.** Children, as today, plus **Staff** (adults). A staff member has a display name loaded at runtime, a role label (Teacher, Co-ordinator, Head) and optional contact details. Repo fixtures use codenames only.
+- **Committee.** A name, a colour, a Co-ordinator (optional), members, and an order.
+- **Duty (Duties & Responsibilities).** Belongs to a Committee (optional) and has:
+  - **Nature of Work** (title) and short details
+  - **Teacher(s) In-charge** (first listed = main in-charge, the accountable owner)
+  - **Approval on/before** date
+  - optional **Approved by** (approver, e.g. a Co-ordinator) and approval date
+  - a status: To do → Doing → Waiting for approval → Done
   - a checklist, attachments, and links to Items, Props or Costumes
-  - **Updates** (status reports)
+  - **Work Status Reports**
 
   Behind Advanced: "Ask" (consulted), "Keep informed" (informed), priority and repeat.
-- **Room.** A name, capacity (optional) and a colour.
-- **Time block.** A name, start time and end time.
-- **Weekly plan (timetable).** Effective from and to dates, with cells of **day × time block × room → Item/group**. One-day changes ("this day only") don't alter the weekly plan. Clashes reuse the existing Clash rules.
-- **Schedule event.** One-off: a date, time, room, type (rehearsal, dress rehearsal, audition, meeting, orientation, performance, deadline, other), who is called, and an optional **Key date** flag. The weekly plan creates events automatically. Performance (already in the model) becomes a Schedule event too.
-- **Roles on the day.** Per Performance: role label → person (staff or child) → section/group (optional) → order in the running order. **Entered once, shown in two places** (Q119 note): in Show → Roles on the day, and in the **programme schedule / running order** as the person shown against that segment (e.g. Anchor, Welcome Address). Editing either place edits the same record.
-- **Meeting.** Date, time, room, attendees, **agenda points**, minutes and **actions**. Each action becomes a Duty with one tap.
+- **Venue.** A name, capacity (optional) and a colour.
+- **Time block.** A name (e.g. Golden Hour 1), start time and end time.
+- **Weekly plan (timetable).** Effective from and to dates, with cells of **day × time block × venue → Cultural Item**. One-day changes ("this day only") don't alter the weekly plan. Clashes reuse the existing Clash rules.
+- **Schedule event.** One-off: a date, time, venue, type (rehearsal, dress rehearsal, audition, meeting, orientation, performance, deadline, other), who is called, and an optional **Important Date** flag. The weekly plan creates events automatically. Performance (already in the model) becomes a Schedule event too.
+- **Programme Duties.** Per Performance: role label → person (staff or child) → section/group (optional) → order in the running order. **Entered once, shown in two places** (Q119 note): in Show → Programme Duties, and in the **programme schedule / running order** as the person shown against that segment (e.g. Anchor, Welcome Address). Editing either place edits the same record.
+- **Meeting.** Date, time, venue, attendees, **agenda points**, minutes and **actions**. Each action becomes a Duty with one tap.
 - **Notice.** Number (auto-suggested, e.g. N-07), date, from (role), title, body, **the original pictures of every page, always preserved** (Q121 note: never altered or deleted when the notice is edited; stored privately in Drive like Q71, original resolution, page order kept), and links to the Duties, Dates and Weekly plan it created. Copy-ready WhatsApp text follows Q64.
-- **Update.** Text, author, time and a status change (optional). It attaches to a Duty or a Committee.
+- **Work Status Report.** Text, author, time and a status change (optional). It attaches to a Duty or a Committee.
 - Every change goes into the existing ChangeLog, so undo works as it does everywhere else.
 
-Proposed new IDs (additive to contract v2): `stf_` Staff, `com_` Committee, `dut_` Duty, `upd_` Update, `rom_` Room, `tbk_` TimeBlock, `wkp_` WeeklyPlan, `wkc_` WeeklyCell, `evt_` ScheduleEvent, `rod_` RoleOnDay, `mtg_` Meeting, `ntc_` Notice.
+Proposed new IDs (additive to contract v2): `stf_` Staff, `com_` Committee, `dut_` Duty, `wsr_` WorkStatusReport, `ven_` Venue, `tbk_` TimeBlock, `wkp_` WeeklyPlan, `wkc_` WeeklyCell, `evt_` ScheduleEvent, `rod_` RoleOnDay, `mtg_` Meeting, `ntc_` Notice.
 
 ## 5. Where it lives (menus)
 **Dock (recommended, Q113a):** **Today · Show · Plan · Members · Notes**, with the gear in the top bar for Settings. **Reports** moves into Plan (attendance %, readiness, Tailor order, Duty progress). That keeps the dock at five tabs with no "More" tab, as the Apple HIG advises.
@@ -83,21 +89,21 @@ Proposed new IDs (additive to contract v2): `stf_` Staff, `com_` Committee, `dut
 ### Phone: first layer vs one step deeper
 | Tab | First screen (glance) | One tap deeper | Advanced (behind "More options") |
 |---|---|---|---|
-| **Today** | **Now & next** (current time block: what is rehearsing where), **My duties** due soon, **Next 3 key dates**, latest Notice, then the existing roll call | Duty sheet · event sheet · notice | – |
-| **Show** | Running order (as today) with role holders shown on each segment + **Roles on the day** strip per performance (Day 1 / Day 2) | Item tabs (as blueprint) · role picker sheet | Cue details |
-| **Plan** | Segmented control: **Duties · Schedule · Dates** (top three), plus a row of small tiles: Meetings, Notices, Reports | Duty → sheet; Schedule → week grid → cell sheet; Date → event sheet | RACI fields, repeat rules, numbering format, import |
-| **Members** | **Children · Staff** switch | Person sheet shows their **duties, roles on the day and calls** too | – |
+| **Today** | **Now & next** (current time block: what is rehearsing where), **My Duties** due soon, **next 3 Important Dates**, latest Notice, then the existing roll call | Duty sheet · event sheet · notice | – |
+| **Show** | Running order (as today) with role holders shown on each segment + **Programme Duties** strip per performance (Day 1 / Day 2) | Item tabs (as blueprint) · role picker sheet | Cue details |
+| **Plan** | Segmented control: **Duties · Practice Schedule · Important Dates** (short labels Duties · Schedule · Dates) (top three), plus a row of small tiles: Meetings, Notices, Reports | Duty → sheet; Schedule → week grid → cell sheet; Date → event sheet | RACI fields, repeat rules, numbering format, import |
+| **Members** | **Children · Staff** switch | Person sheet shows their **Duties, Programme Duties and practice calls** too | – |
 | **Notes** | Unchanged | Notes can link to a Duty, Meeting or Notice | – |
 
 **Inside Plan:**
 - **Duties:**
   - Group by **Committee** (default), **Person** or **Due date**, remembered per device as in Q45a.
-  - Each row shows the duty, lead initials, a due chip (amber when due within 3 days, rose when overdue) and a status dot.
+  - Each row shows the Nature of Work, Teacher(s) In-charge initials, an Approval on/before chip (amber when due within 3 days, rose when overdue) and a status dot.
   - A filter chip at the top switches to **"Mine"**.
 - **Schedule:**
-  - **Week** (timetable grid: days × time blocks with rooms inside), **List** (upcoming) and **Month** views.
-  - On phone the Week view shows one day at a time, swiped left and right. Landscape or iPad shows the full grid with rooms as columns, matching the paper.
-- **Dates:** a list of Key dates by month, with a countdown on the next one ("Dress rehearsal, in 12 days").
+  - **Week** (timetable grid: days × time blocks with venues inside), **List** (upcoming) and **Month** views.
+  - On phone the Week view shows one day at a time, swiped left and right. Landscape or iPad shows the full grid with venues as columns, matching the paper.
+- **Important Dates:** a list by month, with a countdown on the next one ("Dress rehearsal, in 12 days").
 
 ### iPad (landscape) and desktop
 - On iPad the dock becomes the left sidebar. Plan expands to Duties, Schedule, Dates, Meetings, Notices and Reports, two levels at most.
@@ -110,9 +116,9 @@ Proposed new IDs (additive to contract v2): `stf_` Staff, `com_` Committee, `dut
 1. **Today** answers "what now?": Now & next, My duties, next dates.
 2. **One search** (top of every tab) finds people, duties, dates, notices and items. Typing "Hall" shows everything happening in the Hall.
 3. **➕ quick add** (same spot as + Note) with one sheet: Duty · Date · Note · Notice.
-4. **Calendar subscription (.ics):** Schedule and Key dates show up in Apple Calendar and Google Calendar, including their widgets and lock-screen. This is the honest answer for widgets, because a web app can't make its own iPhone/iPad widgets. There's a "My calls only" feed and an "Everything" feed.
+4. **Calendar subscription (.ics):** Practice Schedule and Important Dates show up in Apple Calendar and Google Calendar, including their widgets and lock-screen. This is the honest answer for widgets, because a web app can't make its own iPhone/iPad widgets. There's a "My calls only" feed and an "Everything" feed.
 5. **Share / print:**
-   - Any view turns into a clean A4 PDF in the familiar notice layout (number, date, table, sign-off lines): duty roster, weekly timetable, Roles on the day, or a meeting with its minutes.
+   - Any view turns into a clean A4 PDF in the familiar notice layout (number, date, table, approval/signature lines): duty roster, weekly timetable, Programme Duties, or a meeting with its minutes.
    - It can also become copy-ready WhatsApp text.
 6. **Changes are visible:** a moved time shows the old one struck through, borrowing from theCallboard. There's a small "Changed" badge for 48 h.
 7. **Reminders:** a due-date reminder in the app and the calendar feed carries alerts. Push notifications come later.
@@ -120,7 +126,7 @@ Proposed new IDs (additive to contract v2): `stf_` Staff, `com_` Committee, `dut
 
 ## 7. From paper notice to app data
 - **Step 1 (first build), type it in fast:**
-  - **New notice** → choose a ready layout: *Duty roster*, *Weekly timetable*, *Roles on the day*, *Key dates* or *Meeting*.
+  - **New notice** → choose a ready layout: *Duty roster*, *Weekly timetable*, *Programme Duties*, *Important Dates* or *Meeting*.
   - Each layout is a quick form. For example, the roster is a list of Committee → people → date, and the timetable is a grid to tap-fill.
   - Attach a photo of the paper as the original. Saving creates the Duties, Dates and so on, all linked back to the Notice.
 - **Step 2 (later), photo import:**
@@ -131,8 +137,8 @@ Proposed new IDs (additive to contract v2): `stf_` Staff, `com_` Committee, `dut
 - **Step 3, the reverse:** the app can print the notice from the data, so the paper and the app never disagree.
 
 ## 8. Build order (suggestion)
-1. Mockups (images) for Plan → Duties, Schedule week grid, Today additions and Roles on the day.
-2. Data: Staff, Committee, Duty, Room, Time block, Weekly plan, Event (sheet tabs on TEST).
+1. Mockups (images) for Plan → Duties, Schedule week grid, Today additions and Programme Duties.
+2. Data: Staff, Committee, Duty, Venue, Time block, Weekly plan, Event (sheet tabs on TEST).
 3. Screens: Duties list + sheet → Schedule week/list → Dates → Today cards.
 4. Notices + Meetings, PDF/WhatsApp share, .ics feed.
 5. Photo import (with the iPad plan).
@@ -141,19 +147,19 @@ Proposed new IDs (additive to contract v2): `stf_` Staff, `com_` Committee, `dut
 | Q | Answer | Note |
 |---|---|---|
 | Q113 | **a**: new **Plan** tab; dock = Today · Show · Plan · Members · Notes; Reports moves inside Plan | Supersedes the Q70 dock |
-| Q114 | **a**: **Duties** | |
+| Q114 | **a**: **Duties** → shown as **Duties & Responsibilities** (t101u) | Short label "Duties" in tight UI |
 | Q115 | **b**: **Committees** (not Teams) | Renamed throughout |
-| Q116 | **a**: Lead, Helpers, Due, Status on screen; Sign-off by / Ask / Keep informed behind More options | |
-| Q117 | **a**: timetable grid like the paper; one day per screen on phone, full grid on iPad; "from date" + "this day only" | |
-| Q118 | **a**: one **Dates** list, also in the Schedule calendar, with countdown | |
-| Q119 | **a**: **Roles on the day** inside Show, per performance | Steve: "this will also be in programme schedule". Entered once; shown in Show and in the programme schedule / running order |
+| Q116 | **a**: Teacher(s) In-charge, Approval on/before, Status on screen; Approved by / Ask / Keep informed behind More options | Terms per t101u |
+| Q117 | **a**: Practice Schedule grid like the paper; one day per screen on phone, full grid on iPad; "from date" + "this day only" | |
+| Q118 | **a**: one **Important Dates** list, also in the Schedule calendar, with countdown | |
+| Q119 | **a**: **Programme Duties** (asked as "Roles on the day") inside Show, per Day 1 (Sec A) / Day 2 (Sec B) | Steve: "this will also be in programme schedule". Entered once; shown in Show and in the programme schedule / running order |
 | Q120 | **a**: Members gets **Children · Staff** switch | |
 | Q121 | **a**: **Notices** list in Plan | Steve: also **preserve the original pictures** of notices (all pages, unaltered) |
 | Q122 | **a**: quick type-in forms first (photo attached); photo import with check screen later | |
 | Q123 | **a**: Today shows Now & next, My duties, next 3 dates; calendar subscription (.ics) | |
 | Q124 | **a**: mockups now; build right after Stage 1 (after 2026-12-20) | |
 
-### Original question wording (for the record)
+### Original question wording (for the record; earlier names, superseded by section 3)
 **Q113. Where do the new things live?**
 a) New **Plan** tab; dock becomes Today · Show · Plan · Members · Notes; Reports moves inside Plan ✅
 b) Keep the dock; put Duties and Schedule inside Show
@@ -186,7 +192,7 @@ b) Separate lists per type
 c) Only inside the calendar, no list
 
 **Q119. Anchor, Opening, Welcome Address, Vote of Thanks?**
-a) **Roles on the day** inside Show, per performance (Day 1 / Day 2), in running order ✅
+a) **Programme Duties** (was Programme Duties) inside Show, per performance (Day 1 / Day 2), in running order ✅
 b) As Duties in Plan
 c) Both (role in Show, prep duty in Plan, linked)
 
