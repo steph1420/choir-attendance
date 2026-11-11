@@ -56,7 +56,7 @@ Steve asked (t101u) for terms close to what his school uses. These replace the e
 | **Programme Duties** (inside Show) | Run-of-show roles / programme roles | Anchor, Opening Prayer, Welcome Address, Vote of Thanks, per Day 1 (Sec A) / Day 2 (Sec B) |
 | **Co-ordinator** (a staff role) | Coordinator / manager | Staff role that can approve and edit |
 
-Every label stays renameable (U-01). Event templates (Choir, Play, Dance, Sports day) come with ready Committees and Programme Duties. Note: "Opening Prayer" is Steve's school term (t101u); it is only a default label and can be renamed per event (earlier rule: content stays faith-neutral).
+Every label stays renameable (U-01). Event templates (Choir, Play, Dance, Sports day) come with ready Committees and Programme Duties. **Opening Prayer** is a school-approved default label, kept as an exception to the faith-neutral rule (confirmed by Steve, t102u). Like every label it can still be renamed per event.
 
 ## 4. Data model in plain words
 - **People.** Children, as today, plus **Staff** (adults). A staff member has a display name loaded at runtime, a role label (Teacher, Co-ordinator, Head) and optional contact details. Repo fixtures use codenames only.
