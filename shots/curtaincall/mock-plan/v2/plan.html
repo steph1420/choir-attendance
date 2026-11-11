@@ -1,0 +1,83 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit/tokens.css"><link rel="stylesheet" href="kit/driftline.css">
+<style>
+/* CurtainCall mock-only helpers. Tokens only (no raw colours/sizes outside the kit scale). Gaps in the kit are marked GAP. */
+.cc-page{padding:var(--dl-space-5) var(--dl-space-4) calc(var(--dl-dock-height) + var(--dl-space-12));display:flex;flex-direction:column;gap:var(--dl-space-4);height:100vh;overflow:hidden}
+.cc-top{display:flex;align-items:center;gap:var(--dl-space-2)}.cc-top>div:first-child{flex:1}
+.cc-stack{display:flex;flex-direction:column;gap:var(--dl-space-2)}
+.cc-sec{display:flex;justify-content:space-between;align-items:baseline;padding:0 var(--dl-space-1)}
+.cc-link{color:var(--dl-color-accent);font-size:var(--dl-type-footnote-size);font-weight:600}
+.cc-seg{display:flex}.cc-seg .dl-seg{width:100%}.cc-seg .dl-seg__item{flex:1}
+/* GAP: avatar */ .cc-av{width:28px;height:28px;border-radius:var(--dl-radius-pill);display:grid;place-items:center;font-size:var(--dl-type-caption-size);font-weight:700;color:var(--tone);background:var(--tone-bg);box-shadow:inset 0 0 0 1px var(--tone-border);flex:none}
+.cc-avs{display:flex}.cc-avs .cc-av+.cc-av{margin-left:calc(var(--dl-space-1) * -1);box-shadow:inset 0 0 0 1px var(--tone-border),0 0 0 2px var(--dl-color-surface-solid)}
+/* GAP: countdown lead */ .cc-cd{width:44px;text-align:center;flex:none}.cc-cd b{display:block;font-size:var(--dl-type-title3-size);line-height:var(--dl-type-title3-line);font-variant-numeric:tabular-nums}.cc-cd small{font-size:var(--dl-type-caption-size);color:var(--dl-color-text-muted)}
+/* GAP: timetable cell grid */ .cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--dl-space-2)}
+.cc-cell{border-radius:var(--dl-radius-md);padding:var(--dl-space-3);background:var(--dl-card-bg);box-shadow:inset 0 0 0 1px var(--dl-card-border);min-height:76px;position:relative;overflow:hidden}
+.cc-cell::after{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--tone)}.cc-cell.is-free{opacity:.55}.cc-cell.is-free::after{display:none}
+.cc-cell b{display:block;font-size:var(--dl-type-callout-size);font-weight:600}.cc-cell small{display:block;font-size:var(--dl-type-caption-size);color:var(--dl-color-text-muted)}
+/* GAP: label/value field row inside sheet — uses dl-list + dl-row */
+/* GAP: checkbox */ .cc-cb{width:22px;height:22px;border-radius:var(--dl-radius-xs);box-shadow:inset 0 0 0 2px var(--dl-color-control-border);display:grid;place-items:center;font-size:var(--dl-type-caption-size);flex:none}.cc-cb.is-on{background:linear-gradient(135deg,var(--dl-color-accent-fill),var(--dl-color-accent-fill-2));box-shadow:none;color:var(--dl-color-on-accent)}
+/* GAP: document thumbnail */ .cc-thumb{width:52px;height:68px;border-radius:var(--dl-radius-xs);flex:none;background:var(--dl-color-track);box-shadow:inset 0 0 0 1px var(--dl-color-hairline);position:relative;overflow:hidden}.cc-thumb i{position:absolute;left:8px;right:8px;height:3px;border-radius:2px;background:var(--dl-color-text-faint);opacity:.5}
+.cc-hint{font-size:var(--dl-type-footnote-size);line-height:var(--dl-type-footnote-line);color:var(--dl-color-text-muted);padding:0 var(--dl-space-1)}
+.cc-chips{display:flex;gap:var(--dl-space-2);flex-wrap:wrap}
+.cc-row-pad{padding-left:var(--dl-pad)}
+.dl-row + .dl-row::before{left:var(--dl-pad)}
+.dl-sheet{top:96px;max-height:none}
+/* GAP: 5 labelled tabs do not fit the kit dock at 451px (switch to stacked at <=420 only) */
+.dl-dock{width:calc(100% - 24px)}.dl-dock__tab{flex:1;min-width:0;flex-direction:column;gap:2px;padding:4px 2px;font-size:var(--dl-type-caption-size)}
+</style></head><body><div id="m"></div><script>
+const q=new URLSearchParams(location.search),S=q.get('s');document.documentElement.dataset.theme=q.get('t')||'utopian-day'
+const T=['accent','special','positive','warning','danger','neutral']
+const av=(k,i)=>`<span class="cc-av dl-tone--${T['ABCDEF'.indexOf(k)]}">T${k}</span>`
+const chip=(t,x,on)=>`<span class="dl-chip dl-tone--${t}${on?' is-on':''}">${x}</span>`
+const seg=(opts,on)=>`<div class="cc-seg"><div class="dl-seg" role="radiogroup">${opts.map(o=>`<button class="dl-seg__item${o==on?' is-on':''}">${o==on?'<span class="dl-seg__pill"></span>':''}<span class="dl-seg__label">${o}</span></button>`).join('')}</div></div>`
+const dock=on=>`<nav class="dl-dock">${[['☀','Today'],['🎭','Show'],['🗂','Plan'],['👥','Members'],['📝','Notes']].map(([i,l])=>`<button class="dl-dock__tab${l==on?' is-on':''}">${l==on?'<span class="dl-dock__pill"></span>':''}<span class="dl-dock__icon">${i}</span><span class="dl-dock__label">${l}</span></button>`).join('')}</nav>`
+const row=(title,meta,trail='',lead='')=>`<div class="dl-row">${lead}<span class="dl-row__text"><span class="dl-row__title">${title}</span>${meta?`<span class="dl-row__meta">${meta}</span>`:''}</span>${trail?`<span class="dl-row__trail">${trail}</span>`:''}</div>`
+const hdr=(title,sub,acts)=>`<div class="cc-top"><div><div class="dl-eyebrow">${sub}</div><h1 class="dl-title1">${title}</h1></div>${acts.map(a=>`<button class="dl-iconbtn">${a}</button>`).join('')}</div>`
+const sec=(t,l)=>`<div class="cc-sec"><span class="dl-eyebrow">${t}</span>${l?`<span class="cc-link">${l}</span>`:''}</div>`
+const planTop=hdr('Plan',"Parents' Day 2027",['⌕','＋'])+seg(['Duties','Schedule','Dates'],({2:'Duties',3:'Duties',4:'Schedule',5:'Dates'})[S])
+let h='<div class="cc-page">'
+if(S==1){h+=hdr('Good morning','Wednesday, 11 November',['⌕','⚙'])+`
+<section class="dl-card dl-card--glass dl-tone--accent"><header class="dl-card__head"><div><div class="dl-eyebrow">Now · 7:40 – 8:30</div><h3 class="dl-card__title">Golden Hour 1</h3></div>${chip('accent','Now')}</header>
+<div class="cc-stack"><div style="display:flex;justify-content:space-between"><span>Welcome Song</span><span class="dl-muted">Auditorium</span></div><div style="display:flex;justify-content:space-between"><span>Medley</span><span class="dl-muted">Hall</span></div></div>
+<div class="cc-hint" style="padding:var(--dl-space-3) 0 0">Next: Golden Hour 2 at 10:30 · English Play</div></section>
+<div class="cc-stack">${sec('My Duties','See all')}<div class="dl-list">${row('Stage running order','Approval on/before Sat 14 Nov',chip('warning','In 3 days'))}${row('Music tracks list','Approval on/before Wed 25 Nov')}</div></div>
+<div class="cc-stack">${sec('Important Dates','All dates')}<div class="dl-list">${row('Orientation with parents','Fri 20 Nov · Hall','','<span class="cc-cd"><b>9</b><small>days</small></span>')}${row('Meeting · Co-ordinators','Mon 23 Nov · Staff room','','<span class="cc-cd"><b>12</b><small>days</small></span>')}${row('Dress Rehearsal · Sec A','Tue 19 Jan · Auditorium','','<span class="cc-cd"><b>69</b><small>days</small></span>')}</div></div>
+<div class="cc-stack">${sec('Latest notice')}<div class="dl-list">${row('Notice 7 · Practice Schedule','9 Nov · from the Co-ordinator','›','<span class="dl-row__lead">📄</span>')}</div></div>`+dock('Today')}
+if(S==2){const D=[['Reception','accent',[['Welcome desk & guest list',['A','B'],'Doing',['warning','Sat 14 Nov']],['Chief guest welcome',['C'],'To do',['neutral','Sat 5 Dec']]]],['Seating','positive',[['Seating plan for parents',['D','E'],'Waiting for approval',['neutral','Sat 28 Nov']]]],['Sound & Light','special',[['Music tracks list',['A'],'Doing',['neutral','Wed 25 Nov']],['Mic check plan',['F','B'],'Approved',['positive','Approved']]]]]
+h+=planTop+`<h2 class="dl-headline">Duties & Responsibilities</h2><div class="cc-chips">${chip('neutral','By committee',1)}${chip('neutral','By teacher')}${chip('neutral','By date')}${chip('neutral','Mine')}</div>`
+for(const [c,t,ds] of D)h+=`<div class="cc-stack">${sec(c,`${ds.filter(d=>d[2]=='Approved').length} of ${ds.length} approved`).replace('cc-link','dl-muted" style="font-size:var(--dl-type-caption-size)')}<div class="dl-list">${ds.map(d=>row(d[0],d[2],`<span class="cc-avs">${d[1].map(av).join('')}</span>${chip(...d[3])}`)).join('')}</div></div>`
+h+=`<div class="cc-chips">${['🗓 Meetings','📄 Notices','📊 Reports'].map(x=>`<button class="dl-btn dl-btn--secondary" style="flex:1;padding:0">${x}</button>`).join('')}</div>`+dock('Plan')}
+if(S==3){h+=planTop+`</div><div class="dl-scrim"></div><div class="dl-sheet"><div class="dl-sheet__grab"></div>
+<header class="dl-sheet__head"><div><div class="dl-eyebrow">Reception · Nature of Work</div><h2>Welcome desk & guest list</h2></div><button class="dl-iconbtn">✕</button></header>
+<div class="dl-sheet__body cc-stack" style="gap:var(--dl-space-4)">
+${seg(['To do','Doing','For approval','Approved'],'Doing')}
+<div class="dl-list">${row('Teacher(s) In-charge','',`<span class="cc-avs">${av('A')}${av('B')}</span> Teacher A, Teacher B`)}${row('Approval on/before','',chip('warning','Sat 14 Nov · in 3 days'))}</div>
+<div class="cc-stack">${sec('Checklist')}<div class="dl-list">${[['Table & chairs at entrance',1],['Printed guest list',1],['Badges for helpers',0]].map(([t,o])=>row(t,'','',`<span class="cc-cb${o?' is-on':''}">${o?'✓':''}</span>`)).join('')}</div></div>
+<div class="cc-stack">${sec('Work Status Report')}<div class="dl-list">${row('Guest list printed. Badges next week.','Teacher A · yesterday')}</div></div>
+<div class="dl-list">${row('More options','Approved by, Ask, Keep informed','›')}</div>
+</div><footer class="dl-sheet__foot" style="padding-bottom:var(--dl-space-8)"><button class="dl-btn dl-btn--secondary">Share</button><button class="dl-btn dl-btn--primary">Add report</button></footer></div><div>`+dock('Plan')}
+if(S==4){h+=planTop+`<div style="display:flex;justify-content:space-between;align-items:center"><h2 class="dl-headline">Practice Schedule</h2><span class="dl-muted" style="font-size:var(--dl-type-footnote-size)">Day · Week · Month</span></div>
+<div class="dl-seg" style="width:100%">${[['Mon',9],['Tue',10],['Wed',11],['Thu',12],['Fri',13]].map(([d,n])=>`<button class="dl-seg__item${n==11?' is-on':''}" style="flex:1;padding:0;min-height:52px">${n==11?'<span class="dl-seg__pill"></span>':''}<span class="dl-seg__label">${d}<br>${n}</span></button>`).join('')}</div>`
+for(const [n,t,cs,now] of [['Golden Hour 1','7:40 – 8:30',[['Auditorium','Welcome Song','accent','Choir'],['Hall','Medley','danger','KG A · KG B'],['Play Area','Rain Dance','positive','Prep A'],['Room 4','Free','','']],1],['Golden Hour 2','10:30 – 11:20',[['Auditorium','English Play','warning','Scenes 1–2'],['Hall','Free','',''],['Play Area','Drill','special','Prep B'],['Room 4','Anchoring practice','accent','Programme Duties']]]])
+h+=`<div class="cc-stack"><div class="cc-sec"><span class="dl-headline">${n} <span class="dl-muted" style="font-weight:500;font-size:var(--dl-type-footnote-size)">${t}</span></span>${now?chip('accent','Now'):''}</div><div class="cc-grid">${cs.map(([v,i,tone,g])=>`<div class="cc-cell ${tone?'dl-tone--'+tone:'is-free'}"><small>${v}</small><b>${i}</b><small>${g}</small></div>`).join('')}</div></div>`
+h+=`<div class="cc-hint">Weekly plan with effect from 9 Nov. Tap a box to change just this day.</div>`+dock('Plan')}
+if(S==5){h+=planTop+`<h2 class="dl-headline">Important Dates</h2><section class="dl-stat dl-tone--accent"><div class="dl-stat__label">Next · Orientation with parents</div><div class="dl-stat__value">9 days</div><div class="dl-stat__note">Fri 20 Nov · 9:00 · Hall</div></section>`
+for(const [m,ds] of [['November',[['Audition · English Play','Sat 14 Nov · Auditorium'],['Orientation with parents','Fri 20 Nov · Hall'],['Meeting · Co-ordinators','Mon 23 Nov · Staff room']]],['December',[['Work Status Report due','Fri 4 Dec']]],['January',[['Dress Rehearsal · Sec A','Tue 19 Jan · Auditorium'],['Dress Rehearsal · Sec B','Wed 20 Jan · Auditorium'],["Parents' Day · Day 1 (Sec A)",'Sat 30 Jan · Auditorium']]]])
+h+=`<div class="cc-stack">${sec(m)}<div class="dl-list">${ds.map(d=>row(...d)).join('')}</div></div>`
+h+=dock('Plan')}
+if(S==6){h+=hdr('Notices',"Plan · Parents' Day 2027",['‹','＋'])+`
+<section class="dl-card dl-card--glass"><div style="display:flex;gap:var(--dl-space-3)">${[1,2].map(k=>`<div class="cc-thumb"><i style="top:10px"></i><i style="top:18px;right:20px"></i><i style="top:28px"></i><i style="top:36px"></i><i style="top:46px;right:14px"></i></div>`).join('')}
+<div style="flex:1"><div class="dl-eyebrow">9 Nov 2026</div><h3 class="dl-card__title">Notice 7</h3><div class="dl-muted">Practice Schedule · from the Co-ordinator</div></div></div>
+<div class="cc-chips" style="margin-top:var(--dl-space-4)">${chip('positive','Created 9 duties')}${chip('positive','6 dates')}${chip('neutral','1 weekly plan')}</div>
+<div class="cc-hint" style="padding:var(--dl-space-3) 0">🔒 Original pictures kept as they are · 2 pages</div>
+<div style="display:flex;gap:var(--dl-space-2)"><button class="dl-btn dl-btn--secondary" style="flex:1">Print · Share</button><button class="dl-btn dl-btn--primary" style="flex:1">View pictures</button></div></section>
+<div class="cc-stack">${sec('Earlier')}<div class="dl-list">${row('Notice 6','Duties & Responsibilities · 7 Oct','›','<span class="dl-row__lead">📄</span>')}${row('Notice 3','Programme & Important Dates · 3 Aug','›','<span class="dl-row__lead">📄</span>')}</div></div>
+<div class="cc-hint">New notice: take a picture of the paper, then fill a ready form for duties, practice schedule, programme duties, dates or a meeting.</div>`+dock('Plan')}
+if(S==7){h+=hdr('Show',"Parents' Day 2027",['⌕','⚙'])+seg(['Running order','Programme Duties'],'Programme Duties')+`<div class="cc-chips">${chip('neutral','Day 1 · Sec A · 30 Jan',1)}${chip('neutral','Day 2 · Sec B · 31 Jan')}</div>
+<div class="dl-list">${[['Anchor','Whole programme','A'],['Opening Prayer','Start of show','B'],['Welcome Address','Start of show','C'],['Vote of Thanks','End of show','D']].map(([r,w,k])=>row(r,w,`${av(k)} Teacher ${k}`)).join('')}</div>
+<button class="dl-btn dl-btn--quiet">＋ Add a programme duty</button>
+<div class="cc-stack">${sec('In the running order · Day 1')}<div class="dl-list">${[['1 · Opening Prayer','Teacher B'],['2 · Welcome Address','Teacher C'],['3 · Welcome Song',''],['4 · Medley','']].map(([t,n])=>row(t,'',n?chip('accent',n):'')).join('')}</div></div>
+<div class="cc-hint">Entered once. Programme Duties also show in the running order.</div>`+dock('Show')}
+h+='</div>';document.getElementById('m').innerHTML=h
+</script></body></html>
