@@ -30,4 +30,4 @@ Parents' Day 2027 at School-LF: performances 2027-01-30 and 2027-01-31. Items: W
 0 Blueprint + mockups → 1 Live base (GitHub Pages + Apps Script on TEST) → 1.1 Parts tree → 1.2 Notes core → 1.3 Show plan + call list → 1.4 Costumes, props, parent requests → 1.5 Show day → 2 Notes deep + templates → 2.1 Screencast → 3 Stage & polish → 4 Later.
 
 ## Files
-01-DATA-MODEL · 02-SHEET-SCHEMA · 03-NAVIGATION · 04-UI-PRINCIPLES · 05-STAGES · 06-OPEN-QUESTIONS
+01-DATA-MODEL · 02-SHEET-SCHEMA · 03-NAVIGATION · 04-UI-PRINCIPLES · 05-STAGES · 06-OPEN-QUESTIONS · 07-DECISIONS · 08-IPAD-POWER-PLAN · 09-DUTIES-DATES-PLAN

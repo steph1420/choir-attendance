@@ -36,3 +36,6 @@
 | Q79 | a (Windows, full browser, all connectivity) (2026-11-04, t19u–t21u) |
 
 | U-01 | Universal app | LOCKED 2026-11-04 (Steve t21u–t23u): CurtainCall suits any event that manages people and things. No choir-only wording is hard-wired; roles, parts, labels and categories are customisable, with event templates (Choir, Play, Dance, Sports day, Custom). |
+
+| Q113–Q124 | Duties & Dates plan — see `09-DUTIES-DATES-PLAN.md` | LOCKED 2026-11-11 (Steve t100u): 113a, 114a, 115b (Committees), 116a, 117a, 118a, 119a (also shown in programme schedule), 120a, 121a (+ preserve original notice pictures), 122a, 123a, 124a. |
+| Q70 dock | **Superseded by Q113a** | LOCKED 2026-11-11 (Steve t100u): dock = Today · Show · Plan · Members · Notes + gear; Reports moves inside Plan. |

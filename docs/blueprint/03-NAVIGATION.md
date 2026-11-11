@@ -1,4 +1,6 @@
 # 03 — Navigation (PROPOSED)
+> **Update 2026-11-11 (t100u):** dock is now **Today · Show · Plan · Members · Notes** + gear (Q113a supersedes Q70; Reports inside Plan). See 09-DUTIES-DATES-PLAN.md.
+
 Dock: **Today · Show · Members · Notes · Reports**; **gear** (top bar) → Settings. Supersedes Q35a dock (Today · Members · Reports · Settings) only once Steve answers Q70. Quick-capture **+ Note** is reachable from every screen. A thin "Casting" bar shows while a cast is live.
 
 Phone = one column, bottom dock, details in bottom Sheets. Tablet (landscape) = two balanced columns (~60/40), Sheets open in the right side panel, dock becomes a left rail. Desktop = multi-pane, every option visible.
